@@ -96,19 +96,10 @@ for i = 1:Nsig
         fprintf('\n|- align="center"\n');
         if Signal_Type == BOCsin 
             fprintf('|BoCsin(%.3f, %.3f) at %.0f<math>f_b</math> ', m, n, freq);
-    %             if (~isnan(Complexity_BoCsin(m8, n8)))
-    %                 continue;
-    %             end
         elseif Signal_Type == BOCcos
             fprintf('|BoCcos(%.3f, %.3f) at %.0f<math>f_b</math> ', m, n, freq);
-    %             if (~isnan(Complexity_BoCcos(m8, n8)))
-    %                 continue;
-    %             end
         elseif Signal_Type == BPSK
             fprintf('|BPSK(%.3f) at %.0f<math>f_b</math> ', n, freq);
-    %             if (~isnan(Complexity_BPSK(n8)))
-    %                 continue;
-    %             end
         end
     end
             
@@ -120,19 +111,8 @@ for i = 1:Nsig
     end
 
     % Открываем файл АКФ указанного сигнала
-    try
-        if Signal_Type == BOCsin
-            load([path_to_ro '/ro_BoCsin(' sprintf('%.3f', m) ', ' sprintf('%.3f', n) ').mat'])
-        elseif Signal_Type == BOCcos
-            load([path_to_ro '/ro_BoCcos(' sprintf('%.3f', m) ', ' sprintf('%.3f', n) ').mat'])
-        elseif Signal_Type == BPSK
-            load([path_to_ro '/ro_BoCsin(' sprintf('%.3f', 0) ', ' sprintf('%.3f', n) ').mat'])
-        end
-    catch exception
-        continue; % Если файла нет
-    end
-    ro_our = ro;
-    N_ro = length(ro);
+    ro_our = get_ro(m, n, Signal_Type, path_to_ro);
+    N_ro = length(ro_our);
     abs_ro = abs(ro_our);
     diff_abs_ro = diff(abs_ro);
     

@@ -132,18 +132,7 @@ for f_index = 1:fmax
             n = n8/8;
 
             % Открываем файл АКФ указанного сигнала
-            try
-                if BOC_Type == 1
-                    load([pwd '/ro/ro_BoCsin(' sprintf('%.3f', m) ', ' sprintf('%.3f', n) ').mat'])
-                elseif BOC_Type == 2
-                    load([pwd '/ro/ro_BoCcos(' sprintf('%.3f', m) ', ' sprintf('%.3f', n) ').mat'])
-                elseif BOC_Type == 3
-                    load([pwd '/ro/ro_BoCsin(' sprintf('%.3f', 0) ', ' sprintf('%.3f', n) ').mat'])
-                end
-            catch exception
-                continue; % Если файла нет
-            end
-            ro_our = ro;
+            ro_our = get_ro(m, n, Signal_Type, path_to_ro);
             N_ro = length(ro);
             N_ro_dop = N_ro*4 + 1;
             ro_our_dop = zeros(1, N_ro_dop);
