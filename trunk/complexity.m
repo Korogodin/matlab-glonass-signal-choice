@@ -1,0 +1,186 @@
+clear 
+close all
+clc
+
+n8max = 80;
+m8max = 80;
+farr = 1558:1573; fmax = length(farr); % Нормированный центральные частоты
+
+BoCsincos_L1; % Параметры приемлимых сигналов
+
+% Complexity_BoCsin = nan(m8max, n8max);
+% Complexity_BoCcos = nan(m8max, n8max);
+% Complexity_BPSK = nan(n8max);
+% save('results/complexity/Complexity_BoCsin.mat', 'Complexity_BoCsin');
+% save('results/complexity/Complexity_BoCcos.mat', 'Complexity_BoCcos');
+% save('results/complexity/Complexity_BPSK.mat', 'Complexity_BPSK');
+
+load('results/complexity/Complexity_BoCsin.mat', 'Complexity_BoCsin');
+load('results/complexity/Complexity_BoCcos.mat', 'Complexity_BoCcos');
+load('results/complexity/Complexity_BPSK.mat', 'Complexity_BPSK');
+
+% Параметры нашего сигнала
+BOC_Type = 3; % 1 - sin, 2 - cos, 3 - BPSK
+load([pwd '/ro/Td.mat']);
+
+Table_Type = 2; % 1 - Partial, 2 - html
+
+if Table_Type == 1
+    fprintf('{| class="wikitable sortable" border="1" \n');
+else
+    fprintf('<!DOCTYPE html> \n');
+    fprintf('<html><head><title>!DOCTYPE</title> \n');
+    fprintf('<meta charset="utf-8"> </head> <body> \n');
+end
+
+
+
+if BOC_Type == 1
+    Nsig = size(BoCsin_Freq_L1_num, 1);
+    Sig_Arr = BoCsin_Freq_L1_num;
+    if Table_Type == 1
+        fprintf('|+ Partial complexity of BoC<sub>sin</sub> signal, scores\n');    
+    end
+elseif BOC_Type == 2
+    Nsig = size(BoCcos_Freq_L1_num, 1);
+    Sig_Arr = BoCcos_Freq_L1_num;    
+    if Table_Type == 1
+        fprintf('|+ Partial complexity of BoC<sub>cos</sub> signal, scores\n');    
+    end  
+elseif BOC_Type == 3
+    Nsig = size(BPSK_Freq_L1_num, 1);
+    Sig_Arr = zeros(Nsig, 3);
+    Sig_Arr(:, 2:3) = BPSK_Freq_L1_num;
+    if Table_Type == 1
+        fprintf('|+ Partial complexity of BPSK signal, scores\n');    
+    end
+end
+
+
+if Table_Type == 1
+    fprintf('|- align="center"\n');
+    fprintf('!Signal \n');
+    fprintf('!Band \n');
+    fprintf('!Second peak \n');
+    fprintf('!Sum');
+end
+
+
+
+for i = 1:Nsig
+
+    n = Sig_Arr(i, 2); n8 = n*8;
+    m = Sig_Arr(i, 1); m8 = m*8;   
+    freq = Sig_Arr(i, 3);
+         
+    if Table_Type == 1
+        fprintf('\n|- align="center"\n');
+        if BOC_Type == 1 
+            fprintf('|BoCsin(%.3f, %.3f) at %.0f<math>f_b</math> ', m, n, freq);
+    %             if (~isnan(Complexity_BoCsin(m8, n8)))
+    %                 continue;
+    %             end
+        elseif BOC_Type == 2
+            fprintf('|BoCcos(%.3f, %.3f) at %.0f<math>f_b</math> ', m, n, freq);
+    %             if (~isnan(Complexity_BoCcos(m8, n8)))
+    %                 continue;
+    %             end
+        elseif BOC_Type == 3
+            fprintf('|BPSK(%.3f) at %.0f<math>f_b</math> ', n, freq);
+    %             if (~isnan(Complexity_BPSK(n8)))
+    %                 continue;
+    %             end
+        end
+    end
+            
+    % Число балов сложности за полосу сигнала
+    SignalBand = 2*(n + m);
+    Score_SignalBand = SignalBand / 4;
+    if Table_Type == 1
+        fprintf('|| %.1f (%.0f<math>f_b</math>) ', round(Score_SignalBand*10)/10, round(SignalBand*10)/10 );
+    end
+
+    % Открываем файл АКФ указанного сигнала
+    try
+        if BOC_Type == 1
+            load([pwd '/ro/ro_BoCsin(' sprintf('%.3f', m) ', ' sprintf('%.3f', n) ').mat'])
+        elseif BOC_Type == 2
+            load([pwd '/ro/ro_BoCcos(' sprintf('%.3f', m) ', ' sprintf('%.3f', n) ').mat'])
+        elseif BOC_Type == 3
+            load([pwd '/ro/ro_BoCsin(' sprintf('%.3f', 0) ', ' sprintf('%.3f', n) ').mat'])
+        end
+    catch exception
+        continue; % Если файла нет
+    end
+    ro_our = ro;
+    N_ro = length(ro);
+    abs_ro = abs(ro_our);
+    diff_abs_ro = diff(abs_ro);
+    
+    [a, b] = max(abs_ro);
+    sign_old = -1;
+    max2 = 0;
+    for j = (b+1):(N_ro-1)
+        if (sign_old > 0)&&(diff_abs_ro(j) < 0)
+            max2 = abs_ro(j);
+            break;
+        end
+        sign_old = diff_abs_ro(j);
+    end
+    if max2 > 0.01
+        Score_Peak = max2*3;
+    else
+        Score_Peak = 0;
+    end
+    if Table_Type == 1
+        fprintf('|| %.1f (%.0f%%) ', round(Score_Peak*10)/10, round(max2*100*(max2>0.01)) );
+        fprintf('|| %.1f ', round((Score_SignalBand+Score_Peak)*10)/10);
+    end
+    
+    hF = 0;
+
+    N_co = (length(ro_our) - 1) / 2;
+    hF = figure(hF + 1);
+    tau = (-N_co:1:N_co)*Td*1e6;
+    plot(tau, ro_our);
+    xlabel('\tau, \mu{s}', 'FontSize', 14)
+    ylabel('\rho(\tau)', 'FontSize', 14)
+    grid on;
+    set(gca, 'FontSize', 14)
+    if BOC_Type == 1
+        title(sprintf('{\\rho}({\\tau}) for BOC_{sin}(%s, %s)', sprintf('%.3f', m), sprintf('%.3f', n)), 'FontSize', 14);
+    elseif BOC_Type == 2
+        title(sprintf('{\\rho}({\\tau}) for BOC_{cos}(%s, %s)', sprintf('%.3f', m), sprintf('%.3f', n)), 'FontSize', 14);
+    elseif BOC_Type == 3
+        title(sprintf('{\\rho}({\\tau}) for BPSK(%s)', sprintf('%.3f', n)), 'FontSize', 14);
+    end
+    drawnow
+    if (BOC_Type == 1) 
+        if Table_Type == 2
+            fprintf('<img src="%s" width="530" /><br> \n', ['png/ro_BoCsin(' sprintf('%.3f', m) ', ' sprintf('%.3f', n) ').png']);
+            fprintf('<b>Рисунок 1.7.zzsin%.0f</b> -  <i>Автокорреляционная функция<br>сигнала BoC<sub>sin</sub>(%.3f, %.3f)</i><br><br> \n', i, m, n);
+        end
+        saveas(hF, [pwd '/results/complexity/ro/png/ro_BoCsin(' sprintf('%.3f', m) ', ' sprintf('%.3f', n) ').png']);
+        saveas(hF, [pwd '/results/complexity/ro/fig/ro_BoCsin(' sprintf('%.3f', m) ', ' sprintf('%.3f', n) ').fig']);
+    elseif (BOC_Type == 2)
+        if Table_Type == 2
+            fprintf('<img src="%s" width="530" /><br> \n', ['png/ro_BoCcos(' sprintf('%.3f', m) ', ' sprintf('%.3f', n) ').png']);
+            fprintf('<b>Рисунок 1.7.zzcos%.0f</b> -  <i>Автокорреляционная функция<br>сигнала BoC<sub>cos</sub>(%.3f, %.3f)</i><br><br> \n', i, m, n);
+        end
+        saveas(hF, [pwd '/results/complexity/ro/png/ro_BoCcos(' sprintf('%.3f', m) ', ' sprintf('%.3f', n) ').png']);
+        saveas(hF, [pwd '/results/complexity/ro/fig/ro_BoCcos(' sprintf('%.3f', m) ', ' sprintf('%.3f', n) ').fig']);
+    elseif (BOC_Type == 3)
+        if Table_Type == 2
+            fprintf('<img src="%s" width="530" /><br> \n', ['png/ro_BoCsin(' sprintf('%.3f', 0) ', ' sprintf('%.3f', n) ').png']);
+            fprintf('<b>Рисунок 1.7.zzBPSK%.0f</b> -  <i>Автокорреляционная функция<br>сигнала BPSK(%.3f)</i><br><br> \n', i, n);
+        end
+        saveas(hF, [pwd '/results/complexity/ro/png/ro_BoCsin(' sprintf('%.3f', m) ', ' sprintf('%.3f', n) ').png']);
+        saveas(hF, [pwd '/results/complexity/ro/fig/ro_BoCsin(' sprintf('%.3f', m) ', ' sprintf('%.3f', n) ').fig']);
+    end
+end
+if Table_Type == 1
+    fprintf('\n|} \n');
+else
+    fprintf('</body> </html> \n');
+end
+
