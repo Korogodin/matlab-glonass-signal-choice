@@ -19,14 +19,19 @@ clc
 n8max = 80;
 m8max = 80;
 
-% С помощью данной секции можно создать 
+% С помощью данной секции можно создать пустые массивы
 % InSysJam_BoCsin = nan(m8max, n8max);
 % InSysJam_BoCcos = nan(m8max, n8max);
 % InSysJam_BPSK = nan(m8max, n8max);
 
-load([pwd '/results/intrasystem/InSysJam_BoCsin.mat']);
-load([pwd '/results/intrasystem/InSysJam_BoCcos.mat']);
-load([pwd '/results/intrasystem/InSysJam_BPSK.mat']);
+path_to_ro = [pwd '/ro'];
+% Путь должен существовать, в нем находиться каталоги png и fig
+
+path_to_results = [pwd '/results/intrasystem'];
+load([path_to_results '/InSysJam_BoCsin.mat']);
+load([path_to_results '/InSysJam_BoCcos.mat']);
+load([path_to_results '/InSysJam_BPSK.mat']);
+
 
 n_min = 1;
 fc = 1023;
@@ -34,44 +39,44 @@ N_ms = 8;
 N_1ms = 2*496*fc*n_min;
 N = N_1ms*N_ms;
 Td = 1 / N_1ms / 1000;
-
 hF = 0;
-% BOC(m, n); m >= n
-% BPSK(n)
-Signal_Type = 	2; % 1 - BOCsin; 2 - BOCcos; 3 - BPSK;
 
-Signals_L1;
+% BOC(m, n); m >= n; m,n in {0.125, ... , 10} 
+% BPSK(n); n in {0.125, 0.25, ... , 10}
+BOCsin = 1; BOCcos = 2; BPSK = 3;
+Signal_Type = 1; % 1 - BOCsin; 2 - BOCcos; 3 - BPSK.
+
+Signals_L1; % Список сигналов усеченного выборочного множества в диапазоне L1
 for n8 = 1:1:(8*10)
     for m8 = 1:1:(8*10) 
 
-% for n8 = 1:1:80
-%     for m8 = 0
-
+% % Если хотим посчитать только для усеченного множества
 % for ii = 1:size(BoCcos_Freq_L1_num, 1)        
 %     for jj = 1
 %     m8 = BoCcos_Freq_L1_num(ii, 1)*8;
 %     n8 = BoCcos_Freq_L1_num(ii, 2)*8;
-       
 
         if m8 < n8
-            if Signal_Type ~= 3
+            if Signal_Type ~= BPSK
                 continue;
             end
         end
-%         if ((m8+n8)/8 > 12)  % Если этот сигнал не влазиет в полосу
+
+%         % Если не считаем для сигналов, которые не влазиют в полосу
+%         if ((m8+n8)/8 > 12)  
 %             continue;
 %         end
 
         % Если уже посчитано, то идем дальше
-        if Signal_Type == 1 
+        if Signal_Type == BOCsin 
             if ~isnan(InSysJam_BoCsin(m8, n8))
                 continue;
             end
-        elseif Signal_Type == 2
+        elseif Signal_Type == BOCcos
             if ~isnan(InSysJam_BoCcos(m8, n8))
                 continue;
             end
-        elseif Signal_Type == 3 
+        elseif Signal_Type == BPSK 
             if ~isnan(InSysJam_BPSK(n8))
                 continue;
             end
@@ -146,11 +151,11 @@ for n8 = 1:1:(8*10)
         grid on;
         drawnow
         if (Signal_Type == 1) || (Signal_Type == 3)
-            saveas(hF, [pwd '/ro/png/ro_BoCsin(' sprintf('%.3f', m) ', ' sprintf('%.3f', n) ').png']);
-            saveas(hF, [pwd '/ro/fig/ro_BoCsin(' sprintf('%.3f', m) ', ' sprintf('%.3f', n) ').fig']);
+            saveas(hF, [path_to_ro '/png/ro_BoCsin(' sprintf('%.3f', m) ', ' sprintf('%.3f', n) ').png']);
+            saveas(hF, [path_to_ro '/fig/ro_BoCsin(' sprintf('%.3f', m) ', ' sprintf('%.3f', n) ').fig']);
         elseif Signal_Type == 2
-            saveas(hF, [pwd '/ro/png/ro_BoCcos(' sprintf('%.3f', m) ', ' sprintf('%.3f', n) ').png']);
-            saveas(hF, [pwd '/ro/fig/ro_BoCcos(' sprintf('%.3f', m) ', ' sprintf('%.3f', n) ').fig']);
+            saveas(hF, [path_to_ro '/png/ro_BoCcos(' sprintf('%.3f', m) ', ' sprintf('%.3f', n) ').png']);
+            saveas(hF, [path_to_ro '/fig/ro_BoCcos(' sprintf('%.3f', m) ', ' sprintf('%.3f', n) ').fig']);
         end
         % 
         % hF = figure(hF + 1);
@@ -159,35 +164,31 @@ for n8 = 1:1:(8*10)
         % xlabel('freq, MHz')
         % ylabel('ro FFT, dB')
 
-        if Signal_Type == 3
+        if Signal_Type == BPSK
             InSysJam_BPSK(n8) = 10*log10(ro*ro'*Td);
             fprintf('k_cd для BPSK(%.3f) составляет %.1f дБ \n', n, round(10 * InSysJam_BPSK(n8)) /10);
-            save([pwd '/ro/ro_BoCsin(' sprintf('%.3f', 0) ', ' sprintf('%.3f', n) ').mat'], 'ro');
-            save([pwd '/results/intrasystem/InSysJam_BPSK.mat'], 'InSysJam_BPSK');           
-        elseif Signal_Type == 1
+            save([path_to_ro '/ro_BoCsin(' sprintf('%.3f', 0) ', ' sprintf('%.3f', n) ').mat'], 'ro');
+            save([path_to_results '/InSysJam_BPSK.mat'], 'InSysJam_BPSK');           
+        elseif Signal_Type == BOCsin
             InSysJam_BoCsin(m8, n8) = 10*log10(ro*ro'*Td);
             fprintf('k_cd для BoCsin(%.3f, %.3f) составляет %.1f дБ \n', m, n, round(10 * InSysJam_BoCsin(m8, n8)) /10);
-            save([pwd '/ro/ro_BoCsin(' sprintf('%.3f', m) ', ' sprintf('%.3f', n) ').mat'], 'ro');
-            save([pwd '/results/intrasystem/InSysJam_BoCsin.mat'], 'InSysJam_BoCsin');
-        elseif Signal_Type == 2
+            save([path_to_ro '/ro_BoCsin(' sprintf('%.3f', m) ', ' sprintf('%.3f', n) ').mat'], 'ro');
+            save([path_to_results '/InSysJam_BoCsin.mat'], 'InSysJam_BoCsin');
+        elseif Signal_Type == BOCcos
             InSysJam_BoCcos(m8, n8) = 10*log10(ro*ro'*Td);
             fprintf('k_cd для BoCcos(%.3f, %.3f) составляет %.1f дБ \n', m, n, round(10 * InSysJam_BoCcos(m8, n8)) /10);
-            save([pwd '/ro/ro_BoCcos(' sprintf('%.3f', m) ', ' sprintf('%.3f', n) ').mat'], 'ro');
-            save([pwd '/results/intrasystem/InSysJam_BoCcos.mat'], 'InSysJam_BoCcos');
+            save([path_to_ro '/ro_BoCcos(' sprintf('%.3f', m) ', ' sprintf('%.3f', n) ').mat'], 'ro');
+            save([path_to_results '/InSysJam_BoCcos.mat'], 'InSysJam_BoCcos');
         end
 
+        % Для BPSK по m пробегать не надо
+        if (Signal_Type == BPSK)
+            break;
+        end
     end
 end
 
-if Signal_Type == 3
-    hF = figure(hF + 1);
-    index_bpsk = 8:8:80;
-    index_n_bpsk = index_bpsk / 8;
-    plot(index_n_bpsk, InSysJam_BPSK(index_bpsk))
-    xlabel('n')
-    ylabel('k_{cd}=k_{sd}, dB')
-    grid on
-elseif Signal_Type == 1
+if Signal_Type == BOCsin
     Inn = InSysJam_BoCsin;
     Inn_ur = nan(80, 80);
     for i = 1:80
@@ -200,7 +201,7 @@ elseif Signal_Type == 1
     xlabel('n')
     ylabel('m')
     zlabel('k_{cd}=k_{sd}, dB')    
-elseif Signal_Type == 2
+elseif Signal_Type == BOCcos
     Inn = InSysJam_BoCcos;
     for i = 1:80
         for j = 1:80
@@ -215,7 +216,7 @@ elseif Signal_Type == 2
 end
 
 
-if (Signal_Type == 1)
+if (Signal_Type == BOCsin)
     hF = figure(hF+1);
     pcolor((1:80)/8, (1:80)/8, InSysJam_BoCsin(1:80,1:80));
     xlabel('n')
@@ -223,7 +224,7 @@ if (Signal_Type == 1)
     title('k_{cd} = k_{sd}, dB')
     colorbar
     set(hF, 'Position', [1 1 620 485]);
-elseif (Signal_Type == 2)
+elseif (Signal_Type == BOCcos)
     hF = figure(hF+1);
     pcolor((1:80)/8, (1:80)/8, InSysJam_BoCcos(1:80,1:80));
     xlabel('n')
@@ -233,19 +234,19 @@ elseif (Signal_Type == 2)
     set(hF, 'Position', [1 1 620 485]);    
 end
 
-if (Signal_Type == 1)
+if (Signal_Type == BOCsin)
     hF = figure(hF+1);
     plot((1:79)/8, InSysJam_BoCsin(80, 1:79));
     grid on 
     xlabel('n')
     ylabel('k_{cd} = k_{sd}, dB')    
-elseif (Signal_Type == 2)
+elseif (Signal_Type == BOCcos)
     hF = figure(hF+1);
     plot((1:80)/8, diag(InSysJam_BoCcos));
     grid on
     xlabel('n')
     ylabel('k_{cd} = k_{sd}, dB')    
-elseif (Signal_Type == 3)
+elseif (Signal_Type == BPSK)
     hF = figure(hF+1);
     plot((1:80)/8, (InSysJam_BPSK));
     grid on
