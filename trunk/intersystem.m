@@ -1,3 +1,20 @@
+%/**
+% Данный скрипт рассчитывает коэффициенты спектрального разделения между
+% сигналами полного выборочного множества и сигналами системы GPS при том 
+% условии, что фронтенд настроен на прием наших сигналов (полоса фронтенда 
+% равна полосе сигнала по нулям в теории; на практике в данном скрипте
+% фильтр максимально широкий для выделенного нам частотного диапазона, но
+% при этом симметричный относительно несущей сигнала). Результат вычисления 
+% коэффициентов частотного разделения сохраняется в массивах 
+% InterSysJam_*** с индексами (8*m, 8*n, freq_ind) для BoC-сигналов или 
+% (8*n, freq_ind) для BPSK-сигналов, которые сохраняются в соответствующих 
+% mat-файлах. 
+%@param Signal_Type задает BoCsin, BoCcos или BPSK
+%@param m8max, n8max - максимальное значение индексов 8*m, 8*n. Пробегаем
+%по n и m  с шагом 0.125
+%@param farr - массив номированных несущих частот
+%*/
+
 clear 
 close all
 clc
@@ -46,7 +63,7 @@ load([path_to_results '/InterSysJam_BPSK_L1_BoC_0_10.mat']);
 
 % Параметры нашего сигнала
 BOCsin = 1; BOCcos = 2; BPSK = 3;
-Signal_Type = 2; % 1 - sin, 2 - cos, 3 - BPSK
+Signal_Type = 2; % 1 - BOCsin, 2 - BOCcos, 3 - BPSK
 
 load([pwd '/ro/Td.mat']);
 
@@ -70,6 +87,7 @@ f_intro = 1575.42e6; % Частота мешающих сигналов
 N_ro_old = 0;
 f_index_old = 0;
 
+% Этот блок используется, если хотим пробежать только по списку сигналов
 % for i = 1:size(BPSK_Freq_L1_num, 1)
 % 
 % % n = BoCcos_Freq_L1_num(i, 2); n8 = n*8;
@@ -86,12 +104,14 @@ f_index_old = 0;
 for f_index = 1:fmax
     for n8 = 1:80
         for m8 = 1:80    
-%         for m8 = 0
 % for f_index = 8
 %     for n8 = 2
-%         for m8 = 4*8              
+%         for m8 = 4*8   
+
             if m8 < n8
-                continue;
+                if Signal_Type ~= BPSK
+                    continue;
+                end
             end
             if ((m8+n8)/8 > f_index + 2) || ((m8+n8)/8 > (16-f_index) +2) % Если этот сигнал не влазиет в полосу
                 continue;
@@ -205,6 +225,11 @@ for f_index = 1:fmax
             
             fprintf('Intersystem Jamm BoC(%.3f, %.3f) at %.0f \n \t with GPS BoC(1,1) = %.2f dB\n \t with GPS BoC(6,1) = %.2f dB\n \t with GPS BoC(10,5) = %.2f dB\n \t with GPS BPSK(1) = %.2f dB\n \t with GPS BPSK(10) = %.2f dB\n', m, n, farr(f_index), ...
                 Inte_GPS_BoC_1_1, Inte_GPS_BoC_6_1, Inte_GPS_BoC_10_5, Inte_GPS_BoC_0_1, Inte_GPS_BoC_0_10);
+            
+            % Для BPSK по m пробегать не надо
+            if (Signal_Type == BPSK)
+                break;
+            end
         end
         if Signal_Type == BOCsin 
             save([path_to_results '/InterSysJam_BoCsin_L1_BoC_1_1.mat'], 'InterSysJam_BoCsin_L1_BoC_1_1');

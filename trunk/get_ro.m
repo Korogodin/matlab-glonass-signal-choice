@@ -7,8 +7,6 @@ function ro_out = get_ro( m, n, Signal_Type, path_to_ro )
 %@param path_to_ro - путь до mat-файлов
 %*/
 
-    path_to_ro = [pwd '/ro'];
-
     try
         if Signal_Type == 1
             load([path_to_ro '/ro_BoCsin(' sprintf('%.3f', m) ', ' sprintf('%.3f', n) ').mat'])
