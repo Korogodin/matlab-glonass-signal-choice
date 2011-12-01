@@ -41,6 +41,7 @@ Table_Type = 1; % 1 - wiki, 2 - html
 
 path_to_stuff = '/complexity_stuff/L1'; 
 % Путь должен существовать, а в нем каталоги png и fig
+% Туда будем класть картинки, туда же сдедует положить html
 
 path_to_ro = [pwd '/ro'];
 load([path_to_ro '/Td.mat']);
