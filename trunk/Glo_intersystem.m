@@ -74,6 +74,8 @@ load([path_to_results '/InterSysJam_BPSK_L1_GloVT_mean.mat'], 'InterSysJam_BPSK_
 BOCsin = 1; BOCcos = 2; BPSK = 3;
 Signal_Type = 1; % 1 - BOCsin; 2 - BOCcos; 3 - BPSK.
 
+load([pwd '/ro/Td.mat']);
+
 % АКФ сигнала GLO BPSK(0.5)
 ro_GLO_ST = get_ro(0, 0.5, BPSK, path_to_ro);
 
@@ -92,19 +94,20 @@ N_ro_dop_old = 0;
 for f_index = 1:fmax
     for n8 = 1:80
         for m8 = 1:80     
-
+            
+            do_out = 1;
+                
             Inte_Glo_ST_nodB  = zeros(1, lit_size);
             Inte_Glo_VT_nodB  = zeros(1, lit_size);
 
             if m8 < n8
                 if Signal_Type ~= BPSK
                     do_out = 0;
-                    break;
+                    continue;
                 end
             end
             
             for lit_index = 1:lit_size
-                do_out = 1;
                 % Если уже посчитано, то идем дальше
                 if Signal_Type == BOCsin 
                     if (~isnan(InterSysJam_BoCsin_L1_GloST(m8, n8, f_index, lit_index))) && ...
@@ -119,7 +122,7 @@ for f_index = 1:fmax
                         break;
                     end
                 elseif Signal_Type == BPSK
-                    if (~isnan(InterSysJam_BPSK_L1_BoC_GloST(n8, f_index, lit_index))) && ...
+                    if (~isnan(InterSysJam_BPSK_L1_GloST(n8, f_index, lit_index))) && ...
                             (~isnan(InterSysJam_BPSK_L1_GloVT(n8, f_index, lit_index)))
                         do_out = 0;
                         break;
