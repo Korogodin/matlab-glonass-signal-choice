@@ -2,67 +2,68 @@ clear
 close all
 clc
 
+path_to_ro = [pwd '/ro'];
+path_to_results = [pwd '/results/intersystem_L1'];
+
 n8max = 80;
 m8max = 80;
 farr = 1558:1573; fmax = length(farr); % Нормированный центральные частоты
 
-BoCsincos_L1; % Параметры приемлимых сигналов
+Signals_L1; % Параметры приемлимых сигналов
 
+% С помощью данной секции можно создать пустые массивы
 % InterSysJam_BoCsin_L1_BoC_10_5 = nan(m8max, n8max, fmax);
 % InterSysJam_BoCcos_L1_BoC_10_5 = nan(m8max, n8max, fmax);
-% save('results/InterSysJam_BoCsin_L1_BoC_10_5.mat', 'InterSysJam_BoCsin_L1_BoC_10_5');
-% save('results/InterSysJam_BoCcos_L1_BoC_10_5.mat', 'InterSysJam_BoCcos_L1_BoC_10_5');
+% save([path_to_results '/InterSysJam_BoCsin_L1_BoC_10_5.mat'], 'InterSysJam_BoCsin_L1_BoC_10_5');
+% save([path_to_results '/InterSysJam_BoCcos_L1_BoC_10_5.mat'], 'InterSysJam_BoCcos_L1_BoC_10_5');
 % 
 % InterSysJam_BoCsin_L1_BoC_0_1 = nan(m8max, n8max, fmax);
 % InterSysJam_BoCcos_L1_BoC_0_1 = nan(m8max, n8max, fmax);
-% save('results/InterSysJam_BoCsin_L1_BoC_0_1.mat', 'InterSysJam_BoCsin_L1_BoC_0_1');
-% save('results/InterSysJam_BoCcos_L1_BoC_0_1.mat', 'InterSysJam_BoCcos_L1_BoC_0_1');
+% save([path_to_results '/InterSysJam_BoCsin_L1_BoC_0_1.mat'], 'InterSysJam_BoCsin_L1_BoC_0_1');
+% save([path_to_results '/InterSysJam_BoCcos_L1_BoC_0_1.mat'], 'InterSysJam_BoCcos_L1_BoC_0_1');
 % 
 % InterSysJam_BoCsin_L1_BoC_0_10 = nan(m8max, n8max, fmax);
 % InterSysJam_BoCcos_L1_BoC_0_10 = nan(m8max, n8max, fmax);
-% save('results/InterSysJam_BoCsin_L1_BoC_0_10.mat', 'InterSysJam_BoCsin_L1_BoC_0_10');
-% save('results/InterSysJam_BoCcos_L1_BoC_0_10.mat', 'InterSysJam_BoCcos_L1_BoC_0_10');
-% return
+% save([path_to_results '/InterSysJam_BoCsin_L1_BoC_0_10.mat'], 'InterSysJam_BoCsin_L1_BoC_0_10');
+% save([path_to_results '/InterSysJam_BoCcos_L1_BoC_0_10.mat'], 'InterSysJam_BoCcos_L1_BoC_0_10');
 
-load('results/InterSysJam_BoCsin_L1_BoC_1_1.mat'); 
-load('results/InterSysJam_BoCcos_L1_BoC_1_1.mat');
-load('results/InterSysJam_BPSK_L1_BoC_1_1.mat');
-load('results/InterSysJam_BoCsin_L1_BoC_6_1.mat'); 
-load('results/InterSysJam_BoCcos_L1_BoC_6_1.mat');
-load('results/InterSysJam_BPSK_L1_BoC_6_1.mat');
-load('results/InterSysJam_BoCsin_L1_BoC_10_5.mat');
-load('results/InterSysJam_BoCcos_L1_BoC_10_5.mat');
-load('results/InterSysJam_BPSK_L1_BoC_10_5.mat');
-load('results/InterSysJam_BoCsin_L1_BoC_0_1.mat');
-load('results/InterSysJam_BoCcos_L1_BoC_0_1.mat');
-load('results/InterSysJam_BPSK_L1_BoC_0_1.mat');
-load('results/InterSysJam_BoCsin_L1_BoC_0_10.mat');
-load('results/InterSysJam_BoCcos_L1_BoC_0_10.mat');
-load('results/InterSysJam_BPSK_L1_BoC_0_10.mat');
+
+load([path_to_results '/InterSysJam_BoCsin_L1_BoC_1_1.mat']); 
+load([path_to_results '/InterSysJam_BoCcos_L1_BoC_1_1.mat']);
+load([path_to_results '/InterSysJam_BPSK_L1_BoC_1_1.mat']);
+load([path_to_results '/InterSysJam_BoCsin_L1_BoC_6_1.mat']); 
+load([path_to_results '/InterSysJam_BoCcos_L1_BoC_6_1.mat']);
+load([path_to_results '/InterSysJam_BPSK_L1_BoC_6_1.mat']);
+load([path_to_results '/InterSysJam_BoCsin_L1_BoC_10_5.mat']);
+load([path_to_results '/InterSysJam_BoCcos_L1_BoC_10_5.mat']);
+load([path_to_results '/InterSysJam_BPSK_L1_BoC_10_5.mat']);
+load([path_to_results '/InterSysJam_BoCsin_L1_BoC_0_1.mat']);
+load([path_to_results '/InterSysJam_BoCcos_L1_BoC_0_1.mat']);
+load([path_to_results '/InterSysJam_BPSK_L1_BoC_0_1.mat']);
+load([path_to_results '/InterSysJam_BoCsin_L1_BoC_0_10.mat']);
+load([path_to_results '/InterSysJam_BoCcos_L1_BoC_0_10.mat']);
+load([path_to_results '/InterSysJam_BPSK_L1_BoC_0_10.mat']);
 
 % Параметры нашего сигнала
-BOC_Type = 2; % 1 - sin, 2 - cos, 3 - BPSK
+BOCsin = 1; BOCcos = 2; BPSK = 3;
+Signal_Type = 2; % 1 - sin, 2 - cos, 3 - BPSK
+
 load([pwd '/ro/Td.mat']);
 
 % АКФ сигнала GPS BoC(1, 1)
-load([pwd '/ro/ro_BoCsin(' sprintf('%.3f', 1) ', ' sprintf('%.3f', 1) ').mat'])
-ro_GPS_BoC_1_1 = ro; 
+ro_GPS_BoC_1_1 = get_ro(1, 1, BOCsin, path_to_ro );
 
 % АКФ сигнала GPS BoC(6, 1)
-load([pwd '/ro/ro_BoCsin(' sprintf('%.3f', 6) ', ' sprintf('%.3f', 1) ').mat'])
-ro_GPS_BoC_6_1 = ro; 
+ro_GPS_BoC_6_1 = get_ro(6, 1, BOCsin, path_to_ro );
 
 % АКФ сигнала GPS BoC(10, 5)
-load([pwd '/ro/ro_BoCsin(' sprintf('%.3f', 10) ', ' sprintf('%.3f', 5) ').mat'])
-ro_GPS_BoC_10_5 = ro; 
+ro_GPS_BoC_10_5 = get_ro(10, 5, BOCsin, path_to_ro );
 
 % АКФ сигнала GPS BPSK(1)
-load([pwd '/ro/ro_BoCsin(' sprintf('%.3f', 0) ', ' sprintf('%.3f', 1) ').mat'])
-ro_GPS_BoC_0_1 = ro; 
+ro_GPS_BoC_0_1 = get_ro(0, 1, BPSK, path_to_ro );
 
 % АКФ сигнала GPS BPSK(10)
-load([pwd '/ro/ro_BoCsin(' sprintf('%.3f', 0) ', ' sprintf('%.3f', 10) ').mat'])
-ro_GPS_BoC_0_10 = ro; 
+ro_GPS_BoC_0_10 = get_ro(0, 10, BPSK, path_to_ro );
 
 f_intro = 1575.42e6; % Частота мешающих сигналов
 
@@ -96,7 +97,7 @@ for f_index = 1:fmax
                 continue;
             end
             % Если уже посчитано, то идем дальше
-            if BOC_Type == 1 
+            if Signal_Type == BOCsin 
 %                 if n8 >= 8
                     if (~isnan(InterSysJam_BoCsin_L1_BoC_1_1(m8, n8, f_index))) && ...
                             (~isnan(InterSysJam_BoCsin_L1_BoC_6_1(m8, n8, f_index))) && ...
@@ -106,7 +107,7 @@ for f_index = 1:fmax
                         continue;
                     end
 %                 end
-            elseif BOC_Type == 2
+            elseif Signal_Type == BOCcos
 %                 if n8 >= 8                
                     if (~isnan(InterSysJam_BoCcos_L1_BoC_1_1(m8, n8, f_index))) && ...
                             (~isnan(InterSysJam_BoCcos_L1_BoC_6_1(m8, n8, f_index))) && ...
@@ -116,7 +117,7 @@ for f_index = 1:fmax
                         continue;
                     end
 %                 end
-            elseif BOC_Type == 3
+            elseif Signal_Type == BPSK
 %                 if n8 >= 8
                     if (~isnan(InterSysJam_BPSK_L1_BoC_1_1(n8, f_index))) && ...
                             (~isnan(InterSysJam_BPSK_L1_BoC_6_1(n8, f_index))) && ...
@@ -182,19 +183,19 @@ for f_index = 1:fmax
             Inte_GPS_BoC_0_1  = 10*log10(abs(ro_our_f*(ro_GPS_BoC_0_1_dop_f)'*Td));
             Inte_GPS_BoC_0_10  = 10*log10(abs(ro_our_f*(ro_GPS_BoC_0_10_dop_f)'*Td));
             
-            if BOC_Type == 1 
+            if Signal_Type == BOCsin 
                 InterSysJam_BoCsin_L1_BoC_1_1(m8, n8, f_index) = Inte_GPS_BoC_1_1;
                 InterSysJam_BoCsin_L1_BoC_6_1(m8, n8, f_index) = Inte_GPS_BoC_6_1;
                 InterSysJam_BoCsin_L1_BoC_10_5(m8, n8, f_index) = Inte_GPS_BoC_10_5;
                 InterSysJam_BoCsin_L1_BoC_0_1(m8, n8, f_index) = Inte_GPS_BoC_0_1;
                 InterSysJam_BoCsin_L1_BoC_0_10(m8, n8, f_index) = Inte_GPS_BoC_0_10;
-            elseif BOC_Type == 2
+            elseif Signal_Type == BOCcos
                 InterSysJam_BoCcos_L1_BoC_1_1(m8, n8, f_index) = Inte_GPS_BoC_1_1;                
                 InterSysJam_BoCcos_L1_BoC_6_1(m8, n8, f_index) = Inte_GPS_BoC_6_1;
                 InterSysJam_BoCcos_L1_BoC_10_5(m8, n8, f_index) = Inte_GPS_BoC_10_5;
                 InterSysJam_BoCcos_L1_BoC_0_1(m8, n8, f_index) = Inte_GPS_BoC_0_1;
                 InterSysJam_BoCcos_L1_BoC_0_10(m8, n8, f_index) = Inte_GPS_BoC_0_10;
-            elseif BOC_Type == 3
+            elseif Signal_Type == BPSK
                 InterSysJam_BPSK_L1_BoC_1_1(n8, f_index) = Inte_GPS_BoC_1_1;                
                 InterSysJam_BPSK_L1_BoC_6_1(n8, f_index) = Inte_GPS_BoC_6_1; 
                 InterSysJam_BPSK_L1_BoC_10_5(n8, f_index) = Inte_GPS_BoC_10_5;
@@ -205,24 +206,24 @@ for f_index = 1:fmax
             fprintf('Intersystem Jamm BoC(%.3f, %.3f) at %.0f \n \t with GPS BoC(1,1) = %.2f dB\n \t with GPS BoC(6,1) = %.2f dB\n \t with GPS BoC(10,5) = %.2f dB\n \t with GPS BPSK(1) = %.2f dB\n \t with GPS BPSK(10) = %.2f dB\n', m, n, farr(f_index), ...
                 Inte_GPS_BoC_1_1, Inte_GPS_BoC_6_1, Inte_GPS_BoC_10_5, Inte_GPS_BoC_0_1, Inte_GPS_BoC_0_10);
         end
-        if BOC_Type == 1 
-            save('results/InterSysJam_BoCsin_L1_BoC_1_1.mat', 'InterSysJam_BoCsin_L1_BoC_1_1');
-            save('results/InterSysJam_BoCsin_L1_BoC_6_1.mat', 'InterSysJam_BoCsin_L1_BoC_6_1');
-            save('results/InterSysJam_BoCsin_L1_BoC_10_5.mat', 'InterSysJam_BoCsin_L1_BoC_10_5');
-            save('results/InterSysJam_BoCsin_L1_BoC_0_1.mat', 'InterSysJam_BoCsin_L1_BoC_0_1');
-            save('results/InterSysJam_BoCsin_L1_BoC_0_10.mat', 'InterSysJam_BoCsin_L1_BoC_0_10');
-        elseif BOC_Type == 2
-            save('results/InterSysJam_BoCcos_L1_BoC_1_1.mat', 'InterSysJam_BoCcos_L1_BoC_1_1');
-            save('results/InterSysJam_BoCcos_L1_BoC_6_1.mat', 'InterSysJam_BoCcos_L1_BoC_6_1');
-            save('results/InterSysJam_BoCcos_L1_BoC_10_5.mat', 'InterSysJam_BoCcos_L1_BoC_10_5');
-            save('results/InterSysJam_BoCcos_L1_BoC_0_1.mat', 'InterSysJam_BoCcos_L1_BoC_0_1');
-            save('results/InterSysJam_BoCcos_L1_BoC_0_10.mat', 'InterSysJam_BoCcos_L1_BoC_0_10');    
-        elseif BOC_Type == 3
-            save('results/InterSysJam_BPSK_L1_BoC_1_1.mat', 'InterSysJam_BPSK_L1_BoC_1_1');
-            save('results/InterSysJam_BPSK_L1_BoC_6_1.mat', 'InterSysJam_BPSK_L1_BoC_6_1');
-            save('results/InterSysJam_BPSK_L1_BoC_10_5.mat', 'InterSysJam_BPSK_L1_BoC_10_5');
-            save('results/InterSysJam_BPSK_L1_BoC_0_1.mat', 'InterSysJam_BPSK_L1_BoC_0_1');
-            save('results/InterSysJam_BPSK_L1_BoC_0_10.mat', 'InterSysJam_BPSK_L1_BoC_0_10');               
+        if Signal_Type == BOCsin 
+            save([path_to_results '/InterSysJam_BoCsin_L1_BoC_1_1.mat'], 'InterSysJam_BoCsin_L1_BoC_1_1');
+            save([path_to_results '/InterSysJam_BoCsin_L1_BoC_6_1.mat'], 'InterSysJam_BoCsin_L1_BoC_6_1');
+            save([path_to_results '/InterSysJam_BoCsin_L1_BoC_10_5.mat'], 'InterSysJam_BoCsin_L1_BoC_10_5');
+            save([path_to_results '/InterSysJam_BoCsin_L1_BoC_0_1.mat'], 'InterSysJam_BoCsin_L1_BoC_0_1');
+            save([path_to_results '/InterSysJam_BoCsin_L1_BoC_0_10.mat'], 'InterSysJam_BoCsin_L1_BoC_0_10');
+        elseif Signal_Type == BOCcos
+            save([path_to_results '/InterSysJam_BoCcos_L1_BoC_1_1.mat'], 'InterSysJam_BoCcos_L1_BoC_1_1');
+            save([path_to_results '/InterSysJam_BoCcos_L1_BoC_6_1.mat'], 'InterSysJam_BoCcos_L1_BoC_6_1');
+            save([path_to_results '/InterSysJam_BoCcos_L1_BoC_10_5.mat'], 'InterSysJam_BoCcos_L1_BoC_10_5');
+            save([path_to_results '/InterSysJam_BoCcos_L1_BoC_0_1.mat'], 'InterSysJam_BoCcos_L1_BoC_0_1');
+            save([path_to_results '/InterSysJam_BoCcos_L1_BoC_0_10.mat'], 'InterSysJam_BoCcos_L1_BoC_0_10');    
+        elseif Signal_Type == BPSK
+            save([path_to_results '/InterSysJam_BPSK_L1_BoC_1_1.mat'], 'InterSysJam_BPSK_L1_BoC_1_1');
+            save([path_to_results '/InterSysJam_BPSK_L1_BoC_6_1.mat'], 'InterSysJam_BPSK_L1_BoC_6_1');
+            save([path_to_results '/InterSysJam_BPSK_L1_BoC_10_5.mat'], 'InterSysJam_BPSK_L1_BoC_10_5');
+            save([path_to_results '/InterSysJam_BPSK_L1_BoC_0_1.mat'], 'InterSysJam_BPSK_L1_BoC_0_1');
+            save([path_to_results '/InterSysJam_BPSK_L1_BoC_0_10.mat'], 'InterSysJam_BPSK_L1_BoC_0_10');               
         end        
     end
 end
@@ -232,15 +233,15 @@ hF = 0;
 
 for i = 1:fmax
     hF = figure(hF+1);
-    if (BOC_Type == 1)
+    if (Signal_Type == BOCsin)
         pcolor((1:80)/8, (1:80)/8, InterSysJam_BoCsin_L1_BoC_1_1(1:80,1:80, i));
         xlabel('n')
         ylabel('m')
-    elseif (BOC_Type == 2)
+    elseif (Signal_Type == BOCcos)
         pcolor((1:80)/8, (1:80)/8, InterSysJam_BoCcos_L1_BoC_1_1(1:80,1:80, i));
         xlabel('n')
         ylabel('m')
-    elseif (BOC_Type == 3)
+    elseif (Signal_Type == BPSK)
         plot((1:80)/8, InterSysJam_BPSK_L1_BoC_1_1(1:80, i));        
         xlabel('n')
         ylabel('k_cd')
