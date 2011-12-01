@@ -1,3 +1,20 @@
+%/**
+% Данный скрипт рассчитывает коэффициенты спектрального разделения между
+% сигналами полного выборочного множества и сигналами ГЛОНАСС FDMA при том 
+% условии, что фронтенд настроен на прием и тех, и других сигналов (полоса
+% фронтенда равна полосе совокупности сигнала по нулям в теории; на 
+% практике в данном скрипте фильтр просто отсутствует). Результат 
+% вычисления коэффициентов частотного разделения сохраняется в массивах 
+% InterSysJam_*** с индексами (8*m, 8*n, freq_ind, lit) для BoC-сигналов 
+% или (8*n, freq_ind, lit) для BPSK-сигналов, которые сохраняются в 
+% соответствующих mat-файлах. Есть ещё файлы с суффиксом _mean, в которых
+% хранится усредненное по литерам значение. 
+%@param Signal_Type задает BoCsin, BoCcos или BPSK
+%@param m8max, n8max - максимальное значение индексов 8*m, 8*n. Пробегаем
+%по n и m  с шагом 0.125
+%@param farr - массив номированных несущих частот
+%*/
+
 clear 
 close all
 clc
@@ -7,60 +24,61 @@ m8max = 80;
 farr = 1558:1573; fmax = length(farr); % Нормированный центральные частоты
 lit_arr = -7:6; lit_size = length(lit_arr);
 
+path_to_ro = [pwd '/ro'];
+path_to_results = [pwd '/results/intersystem_L1'];
+
 % Empty file creation
 % InterSysJam_BoCsin_L1_GloST = nan(m8max, n8max, fmax, lit_size);
 % InterSysJam_BoCcos_L1_GloST = nan(m8max, n8max, fmax, lit_size);
-% save('results/InterSysJam_BoCsin_L1_GloST.mat', 'InterSysJam_BoCsin_L1_GloST');
-% save('results/InterSysJam_BoCcos_L1_GloST.mat', 'InterSysJam_BoCcos_L1_GloST');
+% save([path_to_results '/InterSysJam_BoCsin_L1_GloST.mat'], 'InterSysJam_BoCsin_L1_GloST');
+% save([path_to_results '/InterSysJam_BoCcos_L1_GloST.mat'], 'InterSysJam_BoCcos_L1_GloST');
 % InterSysJam_BoCsin_L1_GloVT = nan(m8max, n8max, fmax, lit_size);
 % InterSysJam_BoCcos_L1_GloVT = nan(m8max, n8max, fmax, lit_size);
-% save('results/InterSysJam_BoCsin_L1_GloVT.mat', 'InterSysJam_BoCsin_L1_GloVT');
-% save('results/InterSysJam_BoCcos_L1_GloVT.mat', 'InterSysJam_BoCcos_L1_GloVT');
+% save([path_to_results '/InterSysJam_BoCsin_L1_GloVT.mat'], 'InterSysJam_BoCsin_L1_GloVT');
+% save([path_to_results '/InterSysJam_BoCcos_L1_GloVT.mat'], 'InterSysJam_BoCcos_L1_GloVT');
 % InterSysJam_BPSK_L1_GloST = nan(n8max, fmax, lit_size);
 % InterSysJam_BPSK_L1_GloVT = nan(n8max, fmax, lit_size);
-% save('results/InterSysJam_BPSK_L1_GloST.mat', 'InterSysJam_BPSK_L1_GloST');
-% save('results/InterSysJam_BPSK_L1_GloVT.mat', 'InterSysJam_BPSK_L1_GloVT');
+% save([path_to_results '/InterSysJam_BPSK_L1_GloST.mat'], 'InterSysJam_BPSK_L1_GloST');
+% save([path_to_results '/InterSysJam_BPSK_L1_GloVT.mat'], 'InterSysJam_BPSK_L1_GloVT');
 % 
 % InterSysJam_BoCsin_L1_GloST_mean = nan(m8max, n8max, fmax);
 % InterSysJam_BoCcos_L1_GloST_mean = nan(m8max, n8max, fmax);
-% save('results/InterSysJam_BoCsin_L1_GloST_mean.mat', 'InterSysJam_BoCsin_L1_GloST_mean');
-% save('results/InterSysJam_BoCcos_L1_GloST_mean.mat', 'InterSysJam_BoCcos_L1_GloST_mean');
+% save([path_to_results '/InterSysJam_BoCsin_L1_GloST_mean.mat'], 'InterSysJam_BoCsin_L1_GloST_mean');
+% save([path_to_results '/InterSysJam_BoCcos_L1_GloST_mean.mat'], 'InterSysJam_BoCcos_L1_GloST_mean');
 % InterSysJam_BoCsin_L1_GloVT_mean = nan(m8max, n8max, fmax);
 % InterSysJam_BoCcos_L1_GloVT_mean = nan(m8max, n8max, fmax);
-% save('results/InterSysJam_BoCsin_L1_GloVT_mean.mat', 'InterSysJam_BoCsin_L1_GloVT_mean');
-% save('results/InterSysJam_BoCcos_L1_GloVT_mean.mat', 'InterSysJam_BoCcos_L1_GloVT_mean');
+% save([path_to_results '/InterSysJam_BoCsin_L1_GloVT_mean.mat'], 'InterSysJam_BoCsin_L1_GloVT_mean');
+% save([path_to_results '/InterSysJam_BoCcos_L1_GloVT_mean.mat'], 'InterSysJam_BoCcos_L1_GloVT_mean');
 % InterSysJam_BPSK_L1_GloST_mean = nan(n8max, fmax);
 % InterSysJam_BPSK_L1_GloVT_mean = nan(n8max, fmax);
-% save('results/InterSysJam_BPSK_L1_GloST_mean.mat', 'InterSysJam_BPSK_L1_GloST_mean');
-% save('results/InterSysJam_BPSK_L1_GloVT_mean.mat', 'InterSysJam_BPSK_L1_GloVT_mean');
+% save([path_to_results '/InterSysJam_BPSK_L1_GloST_mean.mat'], 'InterSysJam_BPSK_L1_GloST_mean');
+% save([path_to_results '/InterSysJam_BPSK_L1_GloVT_mean.mat'], 'InterSysJam_BPSK_L1_GloVT_mean');
 
 
 % Load files
-load('results/InterSysJam_BoCsin_L1_GloST.mat', 'InterSysJam_BoCsin_L1_GloST');
-load('results/InterSysJam_BoCcos_L1_GloST.mat', 'InterSysJam_BoCcos_L1_GloST');
-load('results/InterSysJam_BoCsin_L1_GloVT.mat', 'InterSysJam_BoCsin_L1_GloVT');
-load('results/InterSysJam_BoCcos_L1_GloVT.mat', 'InterSysJam_BoCcos_L1_GloVT');
-load('results/InterSysJam_BPSK_L1_GloST.mat', 'InterSysJam_BPSK_L1_GloST');
-load('results/InterSysJam_BPSK_L1_GloVT.mat', 'InterSysJam_BPSK_L1_GloVT');
-load('results/InterSysJam_BoCsin_L1_GloST_mean.mat', 'InterSysJam_BoCsin_L1_GloST_mean');
-load('results/InterSysJam_BoCcos_L1_GloST_mean.mat', 'InterSysJam_BoCcos_L1_GloST_mean');
-load('results/InterSysJam_BoCsin_L1_GloVT_mean.mat', 'InterSysJam_BoCsin_L1_GloVT_mean');
-load('results/InterSysJam_BoCcos_L1_GloVT_mean.mat', 'InterSysJam_BoCcos_L1_GloVT_mean');
-load('results/InterSysJam_BPSK_L1_GloST_mean.mat', 'InterSysJam_BPSK_L1_GloST_mean');
-load('results/InterSysJam_BPSK_L1_GloVT_mean.mat', 'InterSysJam_BPSK_L1_GloVT_mean');
+load([path_to_results '/InterSysJam_BoCsin_L1_GloST.mat'], 'InterSysJam_BoCsin_L1_GloST');
+load([path_to_results '/InterSysJam_BoCcos_L1_GloST.mat'], 'InterSysJam_BoCcos_L1_GloST');
+load([path_to_results '/InterSysJam_BoCsin_L1_GloVT.mat'], 'InterSysJam_BoCsin_L1_GloVT');
+load([path_to_results '/InterSysJam_BoCcos_L1_GloVT.mat'], 'InterSysJam_BoCcos_L1_GloVT');
+load([path_to_results '/InterSysJam_BPSK_L1_GloST.mat'], 'InterSysJam_BPSK_L1_GloST');
+load([path_to_results '/InterSysJam_BPSK_L1_GloVT.mat'], 'InterSysJam_BPSK_L1_GloVT');
+load([path_to_results '/InterSysJam_BoCsin_L1_GloST_mean.mat'], 'InterSysJam_BoCsin_L1_GloST_mean');
+load([path_to_results '/InterSysJam_BoCcos_L1_GloST_mean.mat'], 'InterSysJam_BoCcos_L1_GloST_mean');
+load([path_to_results '/InterSysJam_BoCsin_L1_GloVT_mean.mat'], 'InterSysJam_BoCsin_L1_GloVT_mean');
+load([path_to_results '/InterSysJam_BoCcos_L1_GloVT_mean.mat'], 'InterSysJam_BoCcos_L1_GloVT_mean');
+load([path_to_results '/InterSysJam_BPSK_L1_GloST_mean.mat'], 'InterSysJam_BPSK_L1_GloST_mean');
+load([path_to_results '/InterSysJam_BPSK_L1_GloVT_mean.mat'], 'InterSysJam_BPSK_L1_GloVT_mean');
 
 
 % Параметры нашего сигнала
-BOC_Type = 1; % 1 - sin, 2 - cos, 3 - BPSK
-load([pwd '/ro/Td.mat']);
+BOCsin = 1; BOCcos = 2; BPSK = 3;
+Signal_Type = 1; % 1 - BOCsin; 2 - BOCcos; 3 - BPSK.
 
 % АКФ сигнала GLO BPSK(0.5)
-load([pwd '/ro/ro_BoCsin(' sprintf('%.3f', 0) ', ' sprintf('%.3f', 0.5) ').mat'])
-ro_GLO_ST = ro; 
+ro_GLO_ST = get_ro(0, 0.5, BPSK, path_to_ro);
 
 % АКФ сигнала GLO BPSK(5)
-load([pwd '/ro/ro_BoCsin(' sprintf('%.3f', 0) ', ' sprintf('%.3f', 5) ').mat'])
-ro_GLO_VT = ro; 
+ro_GLO_VT = get_ro(0, 5, BPSK, path_to_ro);
 
 N_ro_1 = length(ro_GLO_VT); % Число точек при n >= 1
 N_ro_05 = length(ro_GLO_ST); % Число точек при n = 0.5
@@ -74,31 +92,33 @@ N_ro_dop_old = 0;
 for f_index = 1:fmax
     for n8 = 1:80
         for m8 = 1:80     
-%             for m8 = 0
+
             Inte_Glo_ST_nodB  = zeros(1, lit_size);
             Inte_Glo_VT_nodB  = zeros(1, lit_size);
-            for lit_index = 1:lit_size
-         
-                do_out = 1;
-                if m8 < n8
+
+            if m8 < n8
+                if Signal_Type ~= BPSK
                     do_out = 0;
                     break;
                 end
-                
+            end
+            
+            for lit_index = 1:lit_size
+                do_out = 1;
                 % Если уже посчитано, то идем дальше
-                if BOC_Type == 1 
+                if Signal_Type == BOCsin 
                     if (~isnan(InterSysJam_BoCsin_L1_GloST(m8, n8, f_index, lit_index))) && ...
                             (~isnan(InterSysJam_BoCsin_L1_GloVT(m8, n8, f_index, lit_index)))
                         do_out = 0;
                         break;
                     end
-                elseif BOC_Type == 2
+                elseif Signal_Type == BOCcos
                     if (~isnan(InterSysJam_BoCcos_L1_GloST(m8, n8, f_index, lit_index))) && ...
                             (~isnan(InterSysJam_BoCcos_L1_GloVT(m8, n8, f_index, lit_index)))
                         do_out = 0;
                         break;
                     end
-                elseif BOC_Type == 3
+                elseif Signal_Type == BPSK
                     if (~isnan(InterSysJam_BPSK_L1_BoC_GloST(n8, f_index, lit_index))) && ...
                             (~isnan(InterSysJam_BPSK_L1_GloVT(n8, f_index, lit_index)))
                         do_out = 0;
@@ -106,24 +126,16 @@ for f_index = 1:fmax
                     end                
                 end
 
-                m = m8/8;
+                m = m8/8 * (Signal_Type ~= BPSK);
                 n = n8/8;
 
                 % Открываем файл АКФ указанного сигнала
-                try
-                    if BOC_Type == 1
-                        load([pwd '/ro/ro_BoCsin(' sprintf('%.3f', m) ', ' sprintf('%.3f', n) ').mat'])
-                    elseif BOC_Type == 2
-                        load([pwd '/ro/ro_BoCcos(' sprintf('%.3f', m) ', ' sprintf('%.3f', n) ').mat'])
-                    elseif BOC_Type == 3
-                        load([pwd '/ro/ro_BoCsin(' sprintf('%.3f', 0) ', ' sprintf('%.3f', n) ').mat'])
-                    end
-                catch exception
+                ro_our = get_ro(m, n, Signal_Type, path_to_ro);
+                if ro_our == 0
                     do_out = 0;
                     break; % Если файла нет
                 end
-                ro_our = ro;
-                N_ro = length(ro);
+                N_ro = length(ro_our);
                 offset_for_05 = (N_ro - 1) / 2 - offset_x2;
                 offset_for_1 = (N_ro - 1) / 2 - offset_x1;
                 N_ro_dop = max([N_ro 2*N_ro_1]) *4 + 1;
@@ -169,13 +181,13 @@ for f_index = 1:fmax
                 Inte_Glo_ST  = 10*log10(Inte_Glo_ST_nodB(lit_index));
                 Inte_Glo_VT  = 10*log10(Inte_Glo_VT_nodB(lit_index));
 
-                if BOC_Type == 1 
+                if Signal_Type == BOCsin 
                     InterSysJam_BoCsin_L1_GloST(m8, n8, f_index, lit_index) = Inte_Glo_ST;
                     InterSysJam_BoCsin_L1_GloVT(m8, n8, f_index, lit_index) = Inte_Glo_VT;
-                elseif BOC_Type == 2
+                elseif Signal_Type == BOCcos
                     InterSysJam_BoCcos_L1_GloST(m8, n8, f_index, lit_index) = Inte_Glo_ST;
                     InterSysJam_BoCcos_L1_GloVT(m8, n8, f_index, lit_index) = Inte_Glo_VT;
-                elseif BOC_Type == 3
+                elseif Signal_Type == BPSK
                     InterSysJam_BPSK_L1_GloST(n8, f_index, lit_index) = Inte_Glo_ST;
                     InterSysJam_BPSK_L1_GloVT(n8, f_index, lit_index) = Inte_Glo_VT;
                 end
@@ -188,33 +200,37 @@ for f_index = 1:fmax
                 fprintf('Intersystem Jamm BoC(%.3f, %.3f) at %.0f \n \t with GloST = %.2f dB\n \t with GloVT = %.2f dB\n', m, n, farr(f_index), ...
                     Inte_Glo_ST_mean, Inte_Glo_VT_mean);
 
-                if BOC_Type == 1 
+                if Signal_Type == BOCsin 
                     InterSysJam_BoCsin_L1_GloST_mean(m8, n8, f_index) = Inte_Glo_ST_mean;
                     InterSysJam_BoCsin_L1_GloVT_mean(m8, n8, f_index) = Inte_Glo_VT_mean;
-                elseif BOC_Type == 2
+                elseif Signal_Type == BOCcos
                     InterSysJam_BoCcos_L1_GloST_mean(m8, n8, f_index) = Inte_Glo_ST_mean;
                     InterSysJam_BoCcos_L1_GloVT_mean(m8, n8, f_index) = Inte_Glo_VT_mean;
-                elseif BOC_Type == 3
+                elseif Signal_Type == BPSK
                     InterSysJam_BPSK_L1_GloST_mean(n8, f_index) = Inte_Glo_ST_mean;
                     InterSysJam_BPSK_L1_GloVT_mean(n8, f_index) = Inte_Glo_VT_mean;
                 end        
             end
+            % Для BPSK по m пробегать не надо
+            if (Signal_Type == BPSK)
+                break;
+            end
         end
-        if BOC_Type == 1 
-            save('results/InterSysJam_BoCsin_L1_GloST.mat', 'InterSysJam_BoCsin_L1_GloST');
-            save('results/InterSysJam_BoCsin_L1_GloVT.mat', 'InterSysJam_BoCsin_L1_GloVT');
-            save('results/InterSysJam_BoCsin_L1_GloST_mean.mat', 'InterSysJam_BoCsin_L1_GloST_mean');
-            save('results/InterSysJam_BoCsin_L1_GloVT_mean.mat', 'InterSysJam_BoCsin_L1_GloVT_mean');
-        elseif BOC_Type == 2
-            save('results/InterSysJam_BoCcos_L1_GloST.mat', 'InterSysJam_BoCcos_L1_GloST');
-            save('results/InterSysJam_BoCcos_L1_GloVT.mat', 'InterSysJam_BoCcos_L1_GloVT');
-            save('results/InterSysJam_BoCcos_L1_GloST_mean.mat', 'InterSysJam_BoCcos_L1_GloST_mean');
-            save('results/InterSysJam_BoCcos_L1_GloVT_mean.mat', 'InterSysJam_BoCcos_L1_GloVT_mean');
-        elseif BOC_Type == 3
-            save('results/InterSysJam_BPSK_L1_GloST.mat', 'InterSysJam_BPSK_L1_GloST');
-            save('results/InterSysJam_BPSK_L1_GloVT.mat', 'InterSysJam_BPSK_L1_GloVT');
-            save('results/InterSysJam_BPSK_L1_GloST_mean.mat', 'InterSysJam_BPSK_L1_GloST_mean');
-            save('results/InterSysJam_BPSK_L1_GloVT_mean.mat', 'InterSysJam_BPSK_L1_GloVT_mean');           
+        if Signal_Type == BOCsin 
+            save([path_to_results '/InterSysJam_BoCsin_L1_GloST.mat'], 'InterSysJam_BoCsin_L1_GloST');
+            save([path_to_results '/InterSysJam_BoCsin_L1_GloVT.mat'], 'InterSysJam_BoCsin_L1_GloVT');
+            save([path_to_results '/InterSysJam_BoCsin_L1_GloST_mean.mat'], 'InterSysJam_BoCsin_L1_GloST_mean');
+            save([path_to_results '/InterSysJam_BoCsin_L1_GloVT_mean.mat'], 'InterSysJam_BoCsin_L1_GloVT_mean');
+        elseif Signal_Type == BOCcos
+            save([path_to_results '/InterSysJam_BoCcos_L1_GloST.mat'], 'InterSysJam_BoCcos_L1_GloST');
+            save([path_to_results '/InterSysJam_BoCcos_L1_GloVT.mat'], 'InterSysJam_BoCcos_L1_GloVT');
+            save([path_to_results '/InterSysJam_BoCcos_L1_GloST_mean.mat'], 'InterSysJam_BoCcos_L1_GloST_mean');
+            save([path_to_results '/InterSysJam_BoCcos_L1_GloVT_mean.mat'], 'InterSysJam_BoCcos_L1_GloVT_mean');
+        elseif Signal_Type == BPSK
+            save([path_to_results '/InterSysJam_BPSK_L1_GloST.mat'], 'InterSysJam_BPSK_L1_GloST');
+            save([path_to_results '/InterSysJam_BPSK_L1_GloVT.mat'], 'InterSysJam_BPSK_L1_GloVT');
+            save([path_to_results '/InterSysJam_BPSK_L1_GloST_mean.mat'], 'InterSysJam_BPSK_L1_GloST_mean');
+            save([path_to_results '/InterSysJam_BPSK_L1_GloVT_mean.mat'], 'InterSysJam_BPSK_L1_GloVT_mean');           
         end                
     end
 end
@@ -223,15 +239,15 @@ hF = 0;
 
 for i = 1:fmax
     hF = figure(hF+1);
-    if (BOC_Type == 1)
+    if (Signal_Type == BOCsin)
         pcolor((1:80)/8, (1:80)/8, InterSysJam_BoCsin_L1_GloST_mean(1:80,1:80, i));
         xlabel('n')
         ylabel('m')
-    elseif (BOC_Type == 2)
+    elseif (Signal_Type == BOCcos)
         pcolor((1:80)/8, (1:80)/8, InterSysJam_BoCcos_L1_GloST_mean(1:80,1:80, i));
         xlabel('n')
         ylabel('m')
-    elseif (BOC_Type == 3)
+    elseif (Signal_Type == BPSK)
         plot((1:80)/8, InterSysJam_BPSK_L1_GloST_mean(1:80, i));        
         xlabel('n')
         ylabel('k_cd')
