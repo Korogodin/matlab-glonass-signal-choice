@@ -1,33 +1,39 @@
+%/**
+% Скрипт отрисовки графики для межсистемных помех
+%*/
+
 clear 
 close all
 clc
 
-load('results/InterSysJam_BoCsin_L1_BoC_1_1.mat'); 
-load('results/InterSysJam_BoCcos_L1_BoC_1_1.mat');
-load('results/InterSysJam_BPSK_L1_BoC_1_1.mat');
-load('results/InterSysJam_BoCsin_L1_BoC_6_1.mat'); 
-load('results/InterSysJam_BoCcos_L1_BoC_6_1.mat');
-load('results/InterSysJam_BPSK_L1_BoC_6_1.mat');
-load('results/InterSysJam_BoCsin_L1_BoC_10_5.mat');
-load('results/InterSysJam_BoCcos_L1_BoC_10_5.mat');
-load('results/InterSysJam_BPSK_L1_BoC_10_5.mat');
-load('results/InterSysJam_BoCsin_L1_BoC_0_1.mat');
-load('results/InterSysJam_BoCcos_L1_BoC_0_1.mat');
-load('results/InterSysJam_BPSK_L1_BoC_0_1.mat');
-load('results/InterSysJam_BoCsin_L1_BoC_0_10.mat');
-load('results/InterSysJam_BoCcos_L1_BoC_0_10.mat');
-load('results/InterSysJam_BPSK_L1_BoC_0_10.mat');
-load('results/InterSysJam_BoCsin_L1_GloST_mean.mat', 'InterSysJam_BoCsin_L1_GloST_mean');
-load('results/InterSysJam_BoCcos_L1_GloST_mean.mat', 'InterSysJam_BoCcos_L1_GloST_mean');
-load('results/InterSysJam_BoCsin_L1_GloVT_mean.mat', 'InterSysJam_BoCsin_L1_GloVT_mean');
-load('results/InterSysJam_BoCcos_L1_GloVT_mean.mat', 'InterSysJam_BoCcos_L1_GloVT_mean');
-load('results/InterSysJam_BPSK_L1_GloST_mean.mat', 'InterSysJam_BPSK_L1_GloST_mean');
-load('results/InterSysJam_BPSK_L1_GloVT_mean.mat', 'InterSysJam_BPSK_L1_GloVT_mean');
+path_to_ro = [pwd '/ro'];
+path_to_results = [pwd '/results/intersystem_L1'];
+path_to_pics = [pwd '/k_intersys/L1'];
 
-Signal_Type = 3; 
-% 1 - BoCSin
-% 2 - BoCCos
-% 3 - BPSK
+load([path_to_results '/InterSysJam_BoCsin_L1_BoC_1_1.mat']); 
+load([path_to_results '/InterSysJam_BoCcos_L1_BoC_1_1.mat']);
+load([path_to_results '/InterSysJam_BPSK_L1_BoC_1_1.mat']);
+load([path_to_results '/InterSysJam_BoCsin_L1_BoC_6_1.mat']); 
+load([path_to_results '/InterSysJam_BoCcos_L1_BoC_6_1.mat']);
+load([path_to_results '/InterSysJam_BPSK_L1_BoC_6_1.mat']);
+load([path_to_results '/InterSysJam_BoCsin_L1_BoC_10_5.mat']);
+load([path_to_results '/InterSysJam_BoCcos_L1_BoC_10_5.mat']);
+load([path_to_results '/InterSysJam_BPSK_L1_BoC_10_5.mat']);
+load([path_to_results '/InterSysJam_BoCsin_L1_BoC_0_1.mat']);
+load([path_to_results '/InterSysJam_BoCcos_L1_BoC_0_1.mat']);
+load([path_to_results '/InterSysJam_BPSK_L1_BoC_0_1.mat']);
+load([path_to_results '/InterSysJam_BoCsin_L1_BoC_0_10.mat']);
+load([path_to_results '/InterSysJam_BoCcos_L1_BoC_0_10.mat']);
+load([path_to_results '/InterSysJam_BPSK_L1_BoC_0_10.mat']);
+load([path_to_results '/InterSysJam_BoCsin_L1_GloST_mean.mat'], 'InterSysJam_BoCsin_L1_GloST_mean');
+load([path_to_results '/InterSysJam_BoCcos_L1_GloST_mean.mat'], 'InterSysJam_BoCcos_L1_GloST_mean');
+load([path_to_results '/InterSysJam_BoCsin_L1_GloVT_mean.mat'], 'InterSysJam_BoCsin_L1_GloVT_mean');
+load([path_to_results '/InterSysJam_BoCcos_L1_GloVT_mean.mat'], 'InterSysJam_BoCcos_L1_GloVT_mean');
+load([path_to_results '/InterSysJam_BPSK_L1_GloST_mean.mat'], 'InterSysJam_BPSK_L1_GloST_mean');
+load([path_to_results '/InterSysJam_BPSK_L1_GloVT_mean.mat'], 'InterSysJam_BPSK_L1_GloVT_mean');
+
+BOCsin = 1; BOCcos = 2; BPSK = 3;
+Signal_Type = 2; % 1 - BOCsin, 2 - BOCcos, 3 - BPSK
 
 farr = 1558:1573; fmax = length(farr); % Нормированный центральные частоты
 m8max = 80; n8max = 80;
@@ -43,7 +49,7 @@ Ml_GLO = 8;
 
 sum_dB_min = 999; n8_min = -1; m8_min = -1; freq_min = -10;
 
-if Signal_Type == 1
+if Signal_Type == BOCsin
     L1C = 10*log10(10/11 * 10.^(InterSysJam_BoCsin_L1_BoC_1_1/10) + 1/11 * 10.^(InterSysJam_BoCsin_L1_BoC_6_1/10) ) ;
     L1CA = InterSysJam_BoCsin_L1_BoC_0_1;
     L1P = InterSysJam_BoCsin_L1_BoC_0_10;
@@ -74,8 +80,8 @@ if Signal_Type == 1
             set(gca, 'FontSize', 14)
             set(hF, 'Position', [300 300 558 436])%496 388]);             
             title(sprintf('k_{intersys} for BOC_{sin}, f_n = %.0f', farr(f_in)), 'FontSize', 14);
-            saveas(hF, [pwd '/k_intersys/png/k_intersys_BoCsin_at_' sprintf('%.0f', farr(f_in)) '.png']);
-            saveas(hF, [pwd '/k_intersys/fig/k_intersys_BoCsin_at_' sprintf('%.0f', farr(f_in)) '.fig']);
+            saveas(hF, [path_to_pics '/png/k_intersys_BoCsin_at_' sprintf('%.0f', farr(f_in)) '.png']);
+            saveas(hF, [path_to_pics '/fig/k_intersys_BoCsin_at_' sprintf('%.0f', farr(f_in)) '.fig']);
             [a b] = min(sum_dB);
             [c d] = min(min(sum_dB));
             if sum_dB_min > c
@@ -86,7 +92,7 @@ if Signal_Type == 1
             end
     end
     fprintf('Minimum: %.3f for %s\n', sum_dB_min, ['BoCsin(' sprintf('%.3f', m8_min/8) ', ' sprintf('%.3f', n8_min/8) ') at ' sprintf('%.0f', farr(freq_min))] );    
-elseif Signal_Type == 2
+elseif Signal_Type == BOCcos
     L1C = 10*log10(10/11 * 10.^(InterSysJam_BoCcos_L1_BoC_1_1/10) + 1/11 * 10.^(InterSysJam_BoCcos_L1_BoC_6_1/10) ) ;
     L1CA = InterSysJam_BoCcos_L1_BoC_0_1;
     L1P = InterSysJam_BoCcos_L1_BoC_0_10;
@@ -117,8 +123,8 @@ elseif Signal_Type == 2
             set(gca, 'FontSize', 14)
             set(hF, 'Position', [300 300 558 436])%496 388]);             
             title(sprintf('k_{intersys} for BOC_{cos}, f_n = %.0f', farr(f_in)), 'FontSize', 14);
-            saveas(hF, [pwd '/k_intersys/png/k_intersys_BoCcos_at_' sprintf('%.0f', farr(f_in)) '.png']);
-            saveas(hF, [pwd '/k_intersys/fig/k_intersys_BoCcos_at_' sprintf('%.0f', farr(f_in)) '.fig']);
+            saveas(hF, [path_to_pics '/png/k_intersys_BoCcos_at_' sprintf('%.0f', farr(f_in)) '.png']);
+            saveas(hF, [path_to_pics '/fig/k_intersys_BoCcos_at_' sprintf('%.0f', farr(f_in)) '.fig']);
             [a b] = min(sum_dB);
             [c d] = min(min(sum_dB));
             if sum_dB_min > c
@@ -129,7 +135,7 @@ elseif Signal_Type == 2
             end            
     end
     fprintf('Minimum: %.3f for %s\n', sum_dB_min, ['BoCcos(' sprintf('%.3f', m8_min/8) ', ' sprintf('%.3f', n8_min/8) ') at ' sprintf('%.0f', farr(freq_min))] );    
-elseif Signal_Type == 3
+elseif Signal_Type == BPSK
     
     L1C = 10*log10(10/11 * 10.^(InterSysJam_BPSK_L1_BoC_1_1/10) + 1/11 * 10.^(InterSysJam_BPSK_L1_BoC_6_1/10) ) ;
     L1CA = InterSysJam_BPSK_L1_BoC_0_1;
@@ -160,8 +166,8 @@ elseif Signal_Type == 3
     set(gca, 'FontSize', 14)
     set(hF, 'Position', [300 300 833 554])%496 388]);             
     title('k_{intersys} for BPSK(n)', 'FontSize', 14);
-    saveas(hF, [pwd '/k_intersys/png/k_intersys_BPSK.png']);
-    saveas(hF, [pwd '/k_intersys/fig/k_intersys_BPSK.fig']);
+    saveas(hF, [path_to_pics '/png/k_intersys_BPSK.png']);
+    saveas(hF, [path_to_pics '/fig/k_intersys_BPSK.fig']);
     [a b] = min(sum_dB);
     [c d] = min(min(sum_dB));
     if sum_dB_min > c

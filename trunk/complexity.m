@@ -13,19 +13,26 @@ clear
 close all
 clc
 
-% n8max = 80;
-% m8max = 80;
-% farr = 1558:1573; fmax = length(farr); % Нормированный центральные частоты
-% С помощью данной секции можно создать пустые массивы, на будущее
-% Complexity_BoCsin = nan(m8max, n8max);
-% Complexity_BoCcos = nan(m8max, n8max);
-% Complexity_BPSK = nan(n8max);
-% save('results/complexity/Complexity_BoCsin.mat', 'Complexity_BoCsin');
-% save('results/complexity/Complexity_BoCcos.mat', 'Complexity_BoCcos');
-% save('results/complexity/Complexity_BPSK.mat', 'Complexity_BPSK');
-% load('results/complexity/Complexity_BoCsin.mat', 'Complexity_BoCsin');
-% load('results/complexity/Complexity_BoCcos.mat', 'Complexity_BoCcos');
-% load('results/complexity/Complexity_BPSK.mat', 'Complexity_BPSK');
+n8max = 80;
+m8max = 80;
+farr = 1558:1573; fmax = length(farr); % Нормированный центральные частоты
+
+path_to_stuff = '/complexity_stuff/L1'; 
+% Путь должен существовать, а в нем каталоги png и fig
+% Туда будем класть картинки, туда же сдедует положить html
+path_to_results = [pwd '/results/complexity_L1'];
+path_to_ro = [pwd '/ro'];
+
+% С помощью данной секции можно создать пустые массивы
+% Complexity_BoCsin = nan(m8max, n8max, fmax);
+% Complexity_BoCcos = nan(m8max, n8max, fmax);
+% Complexity_BPSK = nan(n8max, fmax);
+% save([path_to_results '/Complexity_BoCsin.mat'], 'Complexity_BoCsin');
+% save([path_to_results '/Complexity_BoCcos.mat'], 'Complexity_BoCcos');
+% save([path_to_results '/Complexity_BPSK.mat'], 'Complexity_BPSK');
+load([path_to_results '/Complexity_BoCsin.mat'], 'Complexity_BoCsin');
+load([path_to_results '/Complexity_BoCcos.mat'], 'Complexity_BoCcos');
+load([path_to_results '/Complexity_BPSK.mat'], 'Complexity_BPSK');
 
 Signals_L1; % Параметры приемлимых сигналов
 
@@ -39,11 +46,6 @@ Signal_Type = 3; % 1 - BOCsin; 2 - BOCcos; 3 - BPSK.
 T_wiki = 1; T_html = 2;
 Table_Type = 1; % 1 - wiki, 2 - html
 
-path_to_stuff = '/complexity_stuff/L1'; 
-% Путь должен существовать, а в нем каталоги png и fig
-% Туда будем класть картинки, туда же сдедует положить html
-
-path_to_ro = [pwd '/ro'];
 load([path_to_ro '/Td.mat']);
 
 if Table_Type == T_wiki
@@ -90,8 +92,9 @@ end
 for i = 1:Nsig
 
     n = Sig_Arr(i, 2); n8 = n*8;
-    m = Sig_Arr(i, 1); m8 = m*8;   
+    m = Sig_Arr(i, 1) * (Signal_Type ~= BPSK); m8 = m*8;   
     freq = Sig_Arr(i, 3);
+    freq_index = freq - 1557;
          
     if Table_Type == T_wiki
         fprintf('\n|- align="center"\n');
@@ -135,6 +138,15 @@ for i = 1:Nsig
     if Table_Type == T_wiki
         fprintf('|| %.1f (%.0f%%) ', round(Score_Peak*10)/10, round(max2*100*(max2>0.01)) );
         fprintf('|| %.1f ', round((Score_SignalBand+Score_Peak)*10)/10);
+        for freq_index = 1:fmax
+            if Signal_Type == BOCsin
+                Complexity_BoCsin(m8, n8, freq_index) = Score_SignalBand + Score_Peak;
+            elseif Signal_Type == BOCcos
+                Complexity_BoCcos(m8, n8, freq_index) = Score_SignalBand + Score_Peak;
+            elseif Signal_Type == BPSK
+                Complexity_BPSK(n8, freq_index) = Score_SignalBand + Score_Peak;
+            end
+        end
     end
     
     hF = 0;
@@ -184,3 +196,6 @@ elseif Table_Type == T_html
     fprintf('</body> </html> \n');
 end
 
+save([path_to_results '/Complexity_BoCsin.mat'], 'Complexity_BoCsin');
+save([path_to_results '/Complexity_BoCcos.mat'], 'Complexity_BoCcos');
+save([path_to_results '/Complexity_BPSK.mat'], 'Complexity_BPSK');

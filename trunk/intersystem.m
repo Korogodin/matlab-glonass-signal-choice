@@ -154,7 +154,10 @@ for f_index = 1:fmax
 
             % Открываем файл АКФ указанного сигнала
             ro_our = get_ro(m, n, Signal_Type, path_to_ro);
-            N_ro = length(ro);
+            if ro_our == 0
+                continue
+            end
+            N_ro = length(ro_our);
             N_ro_dop = N_ro*4 + 1;
             ro_our_dop = zeros(1, N_ro_dop);
             ro_our_dop(1:N_ro) = ro_our;

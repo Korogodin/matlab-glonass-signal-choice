@@ -28,67 +28,62 @@ Table_num = 3.5;
 % 8 - BoC cos by FDMA
 % 9 - BPSK cos by FDMA
 
+n8max = 80;
+m8max = 80;
+farr = 1558:1573; fmax = length(farr); % Нормированный центральные частоты
 
-BoCsincos_L1; % Список сигналов, удовлетворяющих РА
+Signals_L1; % Список сигналов, удовлетворяющих РА
 
-load('results/InterSysJam_BoCsin_L1_BoC_1_1.mat'); 
-load('results/InterSysJam_BoCcos_L1_BoC_1_1.mat');
-load('results/InterSysJam_BPSK_L1_BoC_1_1.mat');
-load('results/InterSysJam_BoCsin_L1_BoC_6_1.mat'); 
-load('results/InterSysJam_BoCcos_L1_BoC_6_1.mat');
-load('results/InterSysJam_BPSK_L1_BoC_6_1.mat');
-load('results/InterSysJam_BoCsin_L1_BoC_10_5.mat');
-load('results/InterSysJam_BoCcos_L1_BoC_10_5.mat');
-load('results/InterSysJam_BPSK_L1_BoC_10_5.mat');
-load('results/InterSysJam_BoCsin_L1_BoC_0_1.mat');
-load('results/InterSysJam_BoCcos_L1_BoC_0_1.mat');
-load('results/InterSysJam_BPSK_L1_BoC_0_1.mat');
-load('results/InterSysJam_BoCsin_L1_BoC_0_10.mat');
-load('results/InterSysJam_BoCcos_L1_BoC_0_10.mat');
-load('results/InterSysJam_BPSK_L1_BoC_0_10.mat');
-load('InSysJam_BoCsin.mat');
-load('InSysJam_BoCcos.mat');
-load('InSysJam_BPSK.mat');
-load('results/InterSysJam_BoCsin_L1_GloST.mat', 'InterSysJam_BoCsin_L1_GloST');
-load('results/InterSysJam_BoCcos_L1_GloST.mat', 'InterSysJam_BoCcos_L1_GloST');
-load('results/InterSysJam_BoCsin_L1_GloVT.mat', 'InterSysJam_BoCsin_L1_GloVT');
-load('results/InterSysJam_BoCcos_L1_GloVT.mat', 'InterSysJam_BoCcos_L1_GloVT');
-load('results/InterSysJam_BPSK_L1_GloST.mat', 'InterSysJam_BPSK_L1_GloST');
-load('results/InterSysJam_BPSK_L1_GloVT.mat', 'InterSysJam_BPSK_L1_GloVT');
-load('results/InterSysJam_BoCsin_L1_GloST_mean.mat', 'InterSysJam_BoCsin_L1_GloST_mean');
-load('results/InterSysJam_BoCcos_L1_GloST_mean.mat', 'InterSysJam_BoCcos_L1_GloST_mean');
-load('results/InterSysJam_BoCsin_L1_GloVT_mean.mat', 'InterSysJam_BoCsin_L1_GloVT_mean');
-load('results/InterSysJam_BoCcos_L1_GloVT_mean.mat', 'InterSysJam_BoCcos_L1_GloVT_mean');
-load('results/InterSysJam_BPSK_L1_GloST_mean.mat', 'InterSysJam_BPSK_L1_GloST_mean');
-load('results/InterSysJam_BPSK_L1_GloVT_mean.mat', 'InterSysJam_BPSK_L1_GloVT_mean');
+path_to_results_intra = [pwd '/results/intrasystem'];
+path_to_results_inter = [pwd '/results/intersystem_L1'];
+path_to_results_back_inter = [pwd '/results/back_intersystem_L1'];
 
-load('results/back/BackInterSysJam_BoCsin_L1_BoC_1_1.mat'); 
-load('results/back/BackInterSysJam_BoCcos_L1_BoC_1_1.mat');
-load('results/back/BackInterSysJam_BPSK_L1_BoC_1_1.mat');
-load('results/back/BackInterSysJam_BoCsin_L1_BoC_6_1.mat'); 
-load('results/back/BackInterSysJam_BoCcos_L1_BoC_6_1.mat');
-load('results/back/BackInterSysJam_BPSK_L1_BoC_6_1.mat');
-load('results/back/BackInterSysJam_BoCsin_L1_BoC_10_5.mat');
-load('results/back/BackInterSysJam_BoCcos_L1_BoC_10_5.mat');
-load('results/back/BackInterSysJam_BPSK_L1_BoC_10_5.mat');
-load('results/back/BackInterSysJam_BoCsin_L1_BoC_0_1.mat');
-load('results/back/BackInterSysJam_BoCcos_L1_BoC_0_1.mat');
-load('results/back/BackInterSysJam_BPSK_L1_BoC_0_1.mat');
-load('results/back/BackInterSysJam_BoCsin_L1_BoC_0_10.mat');
-load('results/back/BackInterSysJam_BoCcos_L1_BoC_0_10.mat');
-load('results/back/BackInterSysJam_BPSK_L1_BoC_0_10.mat');
-% load('results/back/BackInterSysJam_BoCsin_L1_GloST.mat', 'InterSysJam_BoCsin_L1_GloST');
-% load('results/back/BackInterSysJam_BoCcos_L1_GloST.mat', 'InterSysJam_BoCcos_L1_GloST');
-% load('results/back/BackInterSysJam_BoCsin_L1_GloVT.mat', 'InterSysJam_BoCsin_L1_GloVT');
-% load('results/back/BackInterSysJam_BoCcos_L1_GloVT.mat', 'InterSysJam_BoCcos_L1_GloVT');
-% load('results/back/BackInterSysJam_BPSK_L1_GloST.mat', 'InterSysJam_BPSK_L1_GloST');
-% load('results/back/BackInterSysJam_BPSK_L1_GloVT.mat', 'InterSysJam_BPSK_L1_GloVT');
-% load('results/back/BackInterSysJam_BoCsin_L1_GloST_mean.mat', 'InterSysJam_BoCsin_L1_GloST_mean');
-% load('results/back/BackInterSysJam_BoCcos_L1_GloST_mean.mat', 'InterSysJam_BoCcos_L1_GloST_mean');
-% load('results/back/BackInterSysJam_BoCsin_L1_GloVT_mean.mat', 'InterSysJam_BoCsin_L1_GloVT_mean');
-% load('results/back/BackInterSysJam_BoCcos_L1_GloVT_mean.mat', 'InterSysJam_BoCcos_L1_GloVT_mean');
-% load('results/back/BackInterSysJam_BPSK_L1_GloST_mean.mat', 'InterSysJam_BPSK_L1_GloST_mean');
-% load('results/back/BackInterSysJam_BPSK_L1_GloVT_mean.mat', 'InterSysJam_BPSK_L1_GloVT_mean');
+load([path_to_results_inter '/InterSysJam_BoCsin_L1_BoC_1_1.mat']); 
+load([path_to_results_inter '/InterSysJam_BoCcos_L1_BoC_1_1.mat']);
+load([path_to_results_inter '/InterSysJam_BPSK_L1_BoC_1_1.mat']);
+load([path_to_results_inter '/InterSysJam_BoCsin_L1_BoC_6_1.mat']); 
+load([path_to_results_inter '/InterSysJam_BoCcos_L1_BoC_6_1.mat']);
+load([path_to_results_inter '/InterSysJam_BPSK_L1_BoC_6_1.mat']);
+load([path_to_results_inter '/InterSysJam_BoCsin_L1_BoC_10_5.mat']);
+load([path_to_results_inter '/InterSysJam_BoCcos_L1_BoC_10_5.mat']);
+load([path_to_results_inter '/InterSysJam_BPSK_L1_BoC_10_5.mat']);
+load([path_to_results_inter '/InterSysJam_BoCsin_L1_BoC_0_1.mat']);
+load([path_to_results_inter '/InterSysJam_BoCcos_L1_BoC_0_1.mat']);
+load([path_to_results_inter '/InterSysJam_BPSK_L1_BoC_0_1.mat']);
+load([path_to_results_inter '/InterSysJam_BoCsin_L1_BoC_0_10.mat']);
+load([path_to_results_inter '/InterSysJam_BoCcos_L1_BoC_0_10.mat']);
+load([path_to_results_inter '/InterSysJam_BPSK_L1_BoC_0_10.mat']);
+load([path_to_results_intra '/InSysJam_BoCsin.mat']);
+load([path_to_results_intra '/InSysJam_BoCcos.mat']);
+load([path_to_results_intra '/InSysJam_BPSK.mat']);
+load([path_to_results_inter '/InterSysJam_BoCsin_L1_GloST.mat'], 'InterSysJam_BoCsin_L1_GloST');
+load([path_to_results_inter '/InterSysJam_BoCcos_L1_GloST.mat'], 'InterSysJam_BoCcos_L1_GloST');
+load([path_to_results_inter '/InterSysJam_BoCsin_L1_GloVT.mat'], 'InterSysJam_BoCsin_L1_GloVT');
+load([path_to_results_inter '/InterSysJam_BoCcos_L1_GloVT.mat'], 'InterSysJam_BoCcos_L1_GloVT');
+load([path_to_results_inter '/InterSysJam_BPSK_L1_GloST.mat'], 'InterSysJam_BPSK_L1_GloST');
+load([path_to_results_inter '/InterSysJam_BPSK_L1_GloVT.mat'], 'InterSysJam_BPSK_L1_GloVT');
+load([path_to_results_inter '/InterSysJam_BoCsin_L1_GloST_mean.mat'], 'InterSysJam_BoCsin_L1_GloST_mean');
+load([path_to_results_inter '/InterSysJam_BoCcos_L1_GloST_mean.mat'], 'InterSysJam_BoCcos_L1_GloST_mean');
+load([path_to_results_inter '/InterSysJam_BoCsin_L1_GloVT_mean.mat'], 'InterSysJam_BoCsin_L1_GloVT_mean');
+load([path_to_results_inter '/InterSysJam_BoCcos_L1_GloVT_mean.mat'], 'InterSysJam_BoCcos_L1_GloVT_mean');
+load([path_to_results_inter '/InterSysJam_BPSK_L1_GloST_mean.mat'], 'InterSysJam_BPSK_L1_GloST_mean');
+load([path_to_results_inter '/InterSysJam_BPSK_L1_GloVT_mean.mat'], 'InterSysJam_BPSK_L1_GloVT_mean');
+
+load([path_to_results_back_inter '/BackInterSysJam_BoCsin_L1_BoC_1_1.mat']); 
+load([path_to_results_back_inter '/BackInterSysJam_BoCcos_L1_BoC_1_1.mat']);
+load([path_to_results_back_inter '/BackInterSysJam_BPSK_L1_BoC_1_1.mat']);
+load([path_to_results_back_inter '/BackInterSysJam_BoCsin_L1_BoC_6_1.mat']); 
+load([path_to_results_back_inter '/BackInterSysJam_BoCcos_L1_BoC_6_1.mat']);
+load([path_to_results_back_inter '/BackInterSysJam_BPSK_L1_BoC_6_1.mat']);
+load([path_to_results_back_inter '/BackInterSysJam_BoCsin_L1_BoC_10_5.mat']);
+load([path_to_results_back_inter '/BackInterSysJam_BoCcos_L1_BoC_10_5.mat']);
+load([path_to_results_back_inter '/BackInterSysJam_BPSK_L1_BoC_10_5.mat']);
+load([path_to_results_back_inter '/BackInterSysJam_BoCsin_L1_BoC_0_1.mat']);
+load([path_to_results_back_inter '/BackInterSysJam_BoCcos_L1_BoC_0_1.mat']);
+load([path_to_results_back_inter '/BackInterSysJam_BPSK_L1_BoC_0_1.mat']);
+load([path_to_results_back_inter '/BackInterSysJam_BoCsin_L1_BoC_0_10.mat']);
+load([path_to_results_back_inter '/BackInterSysJam_BoCcos_L1_BoC_0_10.mat']);
+load([path_to_results_back_inter '/BackInterSysJam_BPSK_L1_BoC_0_10.mat']);
 
 k_JN0_GPS_L1_P = -3;
 k_JN0_GPS_L1_M = +0.5;
@@ -208,6 +203,7 @@ end
 
 
 if Table_num == 1.2
+    InterSysJam_BoCsin_L1 = nan(m8max, n8max, fmax);
     fprintf('{| class="wikitable sortable" border="1" \n');
     fprintf('|+ Intersystem jammer for BoCsin L1: GPS and GLONASS FDMA to GLONASS CDMA, dB\n');
 
@@ -280,10 +276,12 @@ if Table_num == 1.2
             if sum_dB == 0
                 fprintf('|| n/d ');
             else
+                InterSysJam_BoCsin_L1(m8, n8, freq_index) = 10*log10(sum_dB);                
                 fprintf('|| %.1f ', round(10*log10(sum_dB)*10)/10);
             end
         end
     fprintf('\n|} \n');
+    save([path_to_results_inter '/Common/InterSysJam_BoCsin_L1.mat'], 'InterSysJam_BoCsin_L1');        
 end
 
 
@@ -392,6 +390,8 @@ end
 
 
 if Table_num == 1.5
+    BackInterSysJam_BoCsin_L1 = nan(m8max, n8max, fmax);
+    
     fprintf('{| class="wikitable sortable" border="1" \n');
     fprintf('|+ Intersystem jammer for BoCsin L1: GLONASS CDMA to GPS and GLONASS FDMA, dB\n');
 
@@ -456,13 +456,16 @@ if Table_num == 1.5
                 sum_dB = sum_dB + 10^((InterSysJam_BoCsin_L1_GloVT_mean(m8, n8, freq_index))/10);
             end              
             sum_dB = sum_dB / 6;
+
             if sum_dB == 0
                 fprintf('|| n/d ');
             else
+                BackInterSysJam_BoCsin_L1(m8, n8, freq_index) = 10*log10(sum_dB);                
                 fprintf('|| %.1f ', round(10*log10(sum_dB)*10)/10);
             end
         end
     fprintf('\n|} \n');
+    save([path_to_results_back_inter '/Common/BackInterSysJam_BoCsin_L1.mat'], 'BackInterSysJam_BoCsin_L1');
 end
 
 
@@ -575,6 +578,7 @@ end
 
 
 if Table_num == 2.2
+    InterSysJam_BoCcos_L1 = nan(m8max, n8max, fmax);
     fprintf('{| class="wikitable sortable" border="1" \n');
     fprintf('|+ Intersystem jammer for BoCcos L1: GPS and GLONASS FDMA to GLONASS CDMA, dB\n');
 
@@ -647,10 +651,12 @@ if Table_num == 2.2
             if sum_dB == 0
                 fprintf('|| n/d ');
             else
+                InterSysJam_BoCcos_L1(m8, n8, freq_index) = 10*log10(sum_dB); 
                 fprintf('|| %.1f ', round(10*log10(sum_dB)*10)/10);
             end
         end
     fprintf('\n|} \n');
+    save([path_to_results_inter '/Common/InterSysJam_BoCcos_L1.mat'], 'InterSysJam_BoCcos_L1');  
 end
 
 
@@ -759,6 +765,7 @@ end
 
 
 if Table_num == 2.5
+    BackInterSysJam_BoCcos_L1 = nan(m8max, n8max, fmax);
     fprintf('{| class="wikitable sortable" border="1" \n');
     fprintf('|+ Intersystem jammer for BoCcos L1: GLONASS CDMA to GPS and GLONASS FDMA, dB\n');
 
@@ -826,10 +833,12 @@ if Table_num == 2.5
             if sum_dB == 0
                 fprintf('|| n/d ');
             else
+                BackInterSysJam_BoCcos_L1(m8, n8, freq_index) = 10*log10(sum_dB); 
                 fprintf('|| %.1f ', round(10*log10(sum_dB)*10)/10);
             end
         end
     fprintf('\n|} \n');
+    save([path_to_results_back_inter '/Common/BackInterSysJam_BoCcos_L1.mat'], 'BackInterSysJam_BoCcos_L1');      
 end
 
 
@@ -940,6 +949,7 @@ end
 
 
 if Table_num == 3.2
+    InterSysJam_BPSK_L1 = nan(n8max, fmax);
     fprintf('{| class="wikitable sortable" border="1" \n');
     fprintf('|+ Intersystem jammer for BPSK L1: GPS and GLONASS FDMA to GLONASS CDMA, dB\n');
 
@@ -1011,10 +1021,12 @@ if Table_num == 3.2
             if sum_dB == 0
                 fprintf('|| n/d ');
             else
+                InterSysJam_BPSK_L1(n8, freq_index) = 10*log10(sum_dB); 
                 fprintf('|| %.1f ', round(10*log10(sum_dB)*10)/10);
             end
         end
     fprintf('\n|} \n');
+    save([path_to_results_inter '/Common/InterSysJam_BPSK_L1.mat'], 'InterSysJam_BPSK_L1');      
 end
 
 
@@ -1123,6 +1135,7 @@ end
 
 
 if Table_num == 3.5
+    BackInterSysJam_BPSK_L1 = nan(n8max, fmax);
     fprintf('{| class="wikitable sortable" border="1" \n');
     fprintf('|+ Intersystem jammer for BPSK L1: GLONASS CDMA to GPS and GLONASS FDMA, dB\n');
 
@@ -1190,10 +1203,12 @@ if Table_num == 3.5
             if sum_dB == 0
                 fprintf('|| n/d ');
             else
+                BackInterSysJam_BPSK_L1(n8, freq_index) = 10*log10(sum_dB); 
                 fprintf('|| %.1f ', round(10*log10(sum_dB)*10)/10);
             end
         end
     fprintf('\n|} \n');
+    save([path_to_results_back_inter '/Common/BackInterSysJam_BPSK_L1.mat'], 'BackInterSysJam_BPSK_L1');      
 end
 
 
