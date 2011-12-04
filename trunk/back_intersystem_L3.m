@@ -25,7 +25,7 @@ load([path_to_results '/BackInterSysJam_BPSK_L3_BoC_0_10.mat']);
 
 % Параметры нашего сигнала
 BOCsin = 1; BOCcos = 2; BPSK = 3;
-Signal_Type = 1; % 1 - BOCsin, 2 - BOCcos, 3 - BPSK
+Signal_Type = 3; % 1 - BOCsin, 2 - BOCcos, 3 - BPSK
 
 load([pwd '/ro/Td.mat']);
 
