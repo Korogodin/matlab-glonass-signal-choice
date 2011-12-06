@@ -30,15 +30,15 @@ load([path_to_results '/Radioastronomy_BPSK.mat'], 'Radioastronomy_BPSK');
 
 % Параметры нашего сигнала
 BOCsin = 1; BOCcos = 2; BPSK = 3;
-Signal_Type = 3; % 1 - BOCsin, 2 - BOCcos, 3 - BPSK
+Signal_Type = 1; % 1 - BOCsin, 2 - BOCcos, 3 - BPSK
 
 load([pwd '/ro/Td.mat']);
 
 RA_1 = 1610.6e6; % RA bandspace
 RA_2 = 1613.8e6;
 
-for n8 = 1:80
-    for m8 = 1:80  
+for n8 = 2.5*8%1:80
+    for m8 = 5*8%1:80  
          
         if m8 < n8
             continue;
@@ -47,7 +47,7 @@ for n8 = 1:80
         % Если уже всё посчитано, то идем дальше
         if Signal_Type == BOCsin 
                 if (~max(isnan(Radioastronomy_BoCsin(m8, n8, :)))) 
-                    continue;
+%                     continue;
                 end
         elseif Signal_Type == BOCcos
                 if (~max(isnan(Radioastronomy_BoCcos(m8, n8, :))))
@@ -79,7 +79,7 @@ for n8 = 1:80
         fft_ro_our_dop = fft_ro_our_dop / norm_power;
         ff_dop = (-(N_ro_dop/2 - 1):1:N_ro_dop/2)/(Td)/N_ro_dop; % Ось частот для недополненной АКФ
         
-        for freq_index = 1:fmax
+        for freq_index = 8%1:fmax
             max_SP = -1;
             for jj = (N_ro_dop - 1)/2:N_ro_dop
                 if ff_dop(jj) < (RA_1 - farr_Hz(freq_index))

@@ -68,7 +68,7 @@ load([path_to_results '/BackInterSysJam_BPSK_L1_BoC_0_10.mat']);
 
 % Параметры нашего сигнала
 BOCsin = 1; BOCcos = 2; BPSK = 3;
-Signal_Type = 1; % 1 - BOCsin, 2 - BOCcos, 3 - BPSK
+Signal_Type = 3; % 1 - BOCsin, 2 - BOCcos, 3 - BPSK
 
 load([pwd '/ro/Td.mat']);
 
@@ -125,6 +125,9 @@ for f_index = 1:fmax
          
             if m8 < n8
                 continue;
+            end
+            if Signal_Type == BPSK
+                m8 = 0;
             end
             if ((m8+n8)/8 > f_index + 2) || ((m8+n8)/8 > (16-f_index) +2) % Если этот сигнал не влазиет в полосу
                 continue;

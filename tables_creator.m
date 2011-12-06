@@ -220,8 +220,10 @@ if Table_num == 1.2
 
             n = BoCsin_Freq_L1_num(i, 2); n8 = n*8;
             m = BoCsin_Freq_L1_num(i, 1); m8 = m*8;
+            
             freq = BoCsin_Freq_L1_num(i, 3);
             freq_index = freq - 1558 + 1;
+            
             sum_dB = 0;
 
 
