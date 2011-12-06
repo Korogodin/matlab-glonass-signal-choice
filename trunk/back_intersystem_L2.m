@@ -92,9 +92,15 @@ for f_index = 1:fmax
 %         for m8 = 40               
          
             if m8 < n8
-                continue;
+                if Signal_Type ~= BPSK
+                    continue;
+                end
             end
-            if ((m8+n8)/8 > f_index + 2) || ((m8+n8)/8 > (18-f_index) +2) % Если этот сигнал не влазиет в полосу
+            
+            m = m8/8 * (Signal_Type ~= BPSK);
+            n = n8/8;
+            
+            if ((m+n) > f_index + 2) || ((m+n)/8 > (18-f_index) +2) % Если этот сигнал не влазиет в полосу
                 continue;
             end
             % Если уже посчитано, то идем дальше
@@ -118,8 +124,6 @@ for f_index = 1:fmax
                 end                
             end
 
-            m = m8/8 * (Signal_Type ~= BPSK);
-            n = n8/8;
 
             % Открываем файл АКФ указанного сигнала
             ro_our = get_ro(m, n, Signal_Type, path_to_ro);

@@ -127,6 +127,10 @@ for f_index = 1:fmax
                 end                
             end
 
+            if (Signal_Type == BPSK)
+                m8 = 0;
+            end
+            
             if ((m8+n8)/8 > f_index + 2) || ((m8+n8)/8 > (18-f_index) +2) % Если этот сигнал не влазиет в полосу
                 continue;
             end

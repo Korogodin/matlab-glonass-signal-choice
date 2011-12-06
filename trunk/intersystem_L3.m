@@ -80,20 +80,24 @@ for f_index = 1:fmax
             end
 
             if Signal_Type == BOCsin 
-                if (~isnan(InterSysJam_BoCsin_L3_BoC_0_10(m8, n8, fmax)))
+                if (~isnan(InterSysJam_BoCsin_L3_BoC_0_10(m8, n8, f_index)))
                     continue;
                 end
             elseif Signal_Type == BOCcos
-                if (~isnan(InterSysJam_BoCcos_L3_BoC_0_10(m8, n8, fmax)))
+                if (~isnan(InterSysJam_BoCcos_L3_BoC_0_10(m8, n8, f_index)))
                     continue;
                 end
             elseif Signal_Type == BPSK
-                if (~isnan(InterSysJam_BPSK_L3_BoC_0_10(n8, fmax)))
+                if (~isnan(InterSysJam_BPSK_L3_BoC_0_10(n8, f_index)))
                     continue;
                 end                
             end
 
-            if ((m8+n8)/8 > f_index + 2) || ((m8+n8)/8 > (20-f_index) + 2 ) % Если этот сигнал не влазиет в полосу
+            if Signal_Type == BPSK
+                m8 = 0;
+            end            
+            
+            if ((m8+n8)/8 > f_index + 2) || ((m8+n8)/8 > (20-f_index + 2) ) % Если этот сигнал не влазиет в полосу
                 continue;
             end
 
@@ -157,13 +161,13 @@ for f_index = 1:fmax
             
             fprintf('Intersystem Jamm BoC(%.3f, %.3f) at %.0f \n \t with GPS BPSK(10) = %.2f dB\n', m, n, farr(f_index), ...
                  Inte_GPS_BoC_0_10);
-            
+
+            N_ro_old = N_ro;
+            f_index_old = f_index;             
             % Для BPSK по m пробегать не надо
             if (Signal_Type == BPSK)
                 break;
             end
-            N_ro_old = N_ro;
-            f_index_old = f_index;
         end
         
         if Signal_Type == BOCsin 

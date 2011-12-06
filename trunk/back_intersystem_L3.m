@@ -8,8 +8,7 @@ path_to_results = [pwd '/results/back_intersystem_L3'];
 n8max = 80;
 m8max = 80;
 farr = 1164:1184; fmax = length(farr); % Нормированный центральные частоты
-
-% Signals_L3; % Параметры приемлимых сигналов
+Signal_Band = 20;
 
 % BackInterSysJam_BoCsin_L3_BoC_0_10 = nan(m8max, n8max, fmax);
 % BackInterSysJam_BoCcos_L3_BoC_0_10 = nan(m8max, n8max, fmax);
@@ -40,29 +39,21 @@ Hd_0_10 = Hd;
 N_ro_old = 0;
 f_index_old = 0;
 
-% for i = 1:size(BPSK_Freq_L3_num, 1)
-
-% n = BoCcos_Freq_L3_num(i, 2); n8 = n*8;
-% m = BoCcos_Freq_L3_num(i, 1); m8 = m*8;
-% freq = BoCcos_Freq_L3_num(i, 3);
-% n = BPSK_Freq_L3_num(i, 1); n8 = n*8;
-% m = 0; m8 = m*8;
-% freq = BPSK_Freq_L3_num(i, 2);
-% freq_index = freq - 1558 + 1;
-% for f_index = freq_index
-%     for n8 = n8
-%         for m8 = m8 
 for f_index = 1:fmax
     for n8 = 1:80
         for m8 = 1:80  
-% for f_index = 8
-%     for n8 = 20
-%         for m8 = 40               
          
             if m8 < n8
-                continue;
+                if Signal_Type ~= BPSK
+                    continue;
+                end
             end
-            if ((m8+n8)/8 > f_index + 2) || ((m8+n8)/8 > (20-f_index) +2) % Если этот сигнал не влазиет в полосу
+            
+            m = m8/8 * (Signal_Type ~= BPSK);
+            n = n8/8;
+
+            
+            if ((m+n) > f_index + 2) || ((m+n) > (Signal_Band-f_index) +2) % Если этот сигнал не влазиет в полосу
                 continue;
             end
             % Если уже посчитано, то идем дальше
@@ -79,9 +70,6 @@ for f_index = 1:fmax
                     continue;
                 end                
             end
-
-            m = m8/8 * (Signal_Type ~= BPSK);
-            n = n8/8;
 
             % Открываем файл АКФ указанного сигнала
             ro_our = get_ro(m, n, Signal_Type, path_to_ro);

@@ -29,7 +29,7 @@ load([path_to_results '/Pomexoyst_BPSK.mat'], 'Pomexoyst_BPSK');
 
 % Параметры нашего сигнала
 BOCsin = 1; BOCcos = 2; BPSK = 3;
-Signal_Type = 1; % 1 - BOCsin, 2 - BOCcos, 3 - BPSK
+Signal_Type = 3; % 1 - BOCsin, 2 - BOCcos, 3 - BPSK
 
 load([pwd '/ro/Td.mat']);
 
@@ -114,15 +114,18 @@ if Signal_Type == BOCsin
     xlabel('n')
     ylabel('m')
     zlabel('k_{cd}=k_{sd}, dB')    
+    title('BOC_{sin}(m, n) signals')
 elseif Signal_Type == BOCcos
     mesh((1:80)/8, (1:80)/8, Pomexoyst_BoCcos)
     xlabel('n')
     ylabel('m')
     zlabel('k_{cd}=k_{sd}, dB')
+    title('BOC_{cos}(m, n) signals')
 elseif Signal_Type == BPSK
-    plot(1:80, Pomexoyst_BPSK)
+    plot((1:80)/8, Pomexoyst_BPSK)
     xlabel('n')
     ylabel('k_{cd}=k_{sd}, dB')
+    title('BPSK(n) signals')
     grid on
 end
 
@@ -132,13 +135,15 @@ if Signal_Type == BOCsin
     pcolor((1:80)/8, (1:80)/8, Pomexoyst_BoCsin)
     xlabel('n')
     ylabel('m')
-    zlabel('k_{cd}=k_{sd}, dB')    
+    zlabel('k_{cd}=k_{sd}, dB')   
+    title('BOC_{sin}(m, n) signals')
 elseif Signal_Type == BOCcos
     hF = figure(hF + 1);
     pcolor((1:80)/8, (1:80)/8, Pomexoyst_BoCcos)
     xlabel('n')
     ylabel('m')
     zlabel('k_{cd}=k_{sd}, dB')
+    title('BOC_{cos}(m, n) signals')
 end
 
 
