@@ -51,18 +51,16 @@ if Signal_Type == BOCsin
         
         [a b] = min(sum_dB);
         [c d] = min(min(sum_dB));
-        if sum_dB_min > c
             sum_dB_min = c;
             m8_min = b(d);
             n8_min = d;
-        end
+
         [a b] = max(sum_dB);
         [c d] = max(max(sum_dB));
-        if sum_dB_max < c
             sum_dB_max = c;
             m8_max = b(d);
             n8_max = d;
-        end        
+
     fprintf('Minimum: %.3f for %s\n', sum_dB_min, ['BoCsin(' sprintf('%.3f', m8_min/8) ', ' sprintf('%.3f', n8_min/8) ')'] );    
     fprintf('Maximum: %.3f for %s\n', sum_dB_max, ['BoCsin(' sprintf('%.3f', m8_max/8) ', ' sprintf('%.3f', n8_max/8) ')'] );    
 
@@ -93,18 +91,16 @@ elseif Signal_Type == BOCcos
         saveas(hF, [path_to_pics '/fig/OneDevBeta_Mesh_BoCcos.fig']);
         [a b] = min(sum_dB);
         [c d] = min(min(sum_dB));
-        if sum_dB_min > c
             sum_dB_min = c;
             m8_min = b(d);
             n8_min = d;
-        end         
+    
         [a b] = max(sum_dB);
         [c d] = max(max(sum_dB));
-        if sum_dB_max < c
             sum_dB_max = c;
             m8_max = b(d);
             n8_max = d;
-        end        
+
     fprintf('Minimum: %.3f for %s\n', sum_dB_min, ['BoCcos(' sprintf('%.3f', m8_min/8) ', ' sprintf('%.3f', n8_min/8) ')'] );    
     fprintf('Maximum: %.3f for %s\n', sum_dB_max, ['BoCcos(' sprintf('%.3f', m8_max/8) ', ' sprintf('%.3f', n8_max/8) ')'] );    
 
@@ -124,15 +120,13 @@ elseif Signal_Type == BPSK
     saveas(hF, [path_to_pics '/png/OneDevBeta_BPSK.png']);
     saveas(hF, [path_to_pics '/fig/OneDevBeta_BPSK.fig']);
     [a b] = min(sum_dB);
-    if sum_dB_min > a
         sum_dB_min = a;
         n8_min = b;
-    end
+
     [a b] = max(sum_dB);
-    if sum_dB_max < a
         sum_dB_max = a;
         n8_max = b;
-    end
+
     fprintf('Minimum: %.3f for %s\n', sum_dB_min, ['BPSK(' sprintf('%.3f', n8_min/8) ')'] );    
     fprintf('Maximum: %.3f for %s\n', sum_dB_max, ['BPSK(' sprintf('%.3f', n8_max/8) ')'] );    
 end

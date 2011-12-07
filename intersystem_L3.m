@@ -69,9 +69,9 @@ Hd_old = 0;
 %     for n8 = n8
 %         for m8 = m8 
         
-for f_index = 1:fmax
-    for n8 = 1:80
-        for m8 = 1:80    
+for f_index = 12%1:fmax
+    for n8 = 10*8%1:80
+        for m8 = 5*8%1:80    
 
             if m8 < n8
                 if Signal_Type ~= BPSK
@@ -89,7 +89,7 @@ for f_index = 1:fmax
                 end
             elseif Signal_Type == BPSK
                 if (~isnan(InterSysJam_BPSK_L3_BoC_0_10(n8, f_index)))
-                    continue;
+%                     continue;
                 end                
             end
 
@@ -183,23 +183,23 @@ end
 hF = 0;
 
 
-for i = 1:fmax
-    hF = figure(hF+1);
-    if (Signal_Type == BOCsin)
-        pcolor((1:80)/8, (1:80)/8, InterSysJam_BoCsin_L3_BoC_0_10(1:80,1:80, i));
-        xlabel('n')
-        ylabel('m')
-    elseif (Signal_Type == BOCcos)
-        pcolor((1:80)/8, (1:80)/8, InterSysJam_BoCcos_L3_BoC_0_10(1:80,1:80, i));
-        xlabel('n')
-        ylabel('m')
-    elseif (Signal_Type == BPSK)
-        plot((1:80)/8, InterSysJam_BPSK_L3_BoC_0_10(1:80, i));        
-        xlabel('n')
-        ylabel('k_cd')
-    end
-    title(sprintf('Normalized freq = %.0f', farr(i)));
-end
+% for i = 1:fmax
+%     hF = figure(hF+1);
+%     if (Signal_Type == BOCsin)
+%         pcolor((1:80)/8, (1:80)/8, InterSysJam_BoCsin_L3_BoC_0_10(1:80,1:80, i));
+%         xlabel('n')
+%         ylabel('m')
+%     elseif (Signal_Type == BOCcos)
+%         pcolor((1:80)/8, (1:80)/8, InterSysJam_BoCcos_L3_BoC_0_10(1:80,1:80, i));
+%         xlabel('n')
+%         ylabel('m')
+%     elseif (Signal_Type == BPSK)
+%         plot((1:80)/8, InterSysJam_BPSK_L3_BoC_0_10(1:80, i));        
+%         xlabel('n')
+%         ylabel('k_cd')
+%     end
+%     title(sprintf('Normalized freq = %.0f', farr(i)));
+% end
 
 hF = figure(hF + 1);
 plot(1:N_ro, ro_our, 1:N_ro_1, ro_GPS_BoC_0_10, 1:N_ro_1, ro_GPS_BoC_0_10.*cos_df, ...
@@ -216,3 +216,14 @@ plot(ff_dop, (abs(fftshift(fft(ro_our_dop)))), ...
      ff_dop, (abs(fftshift(fft(ro_our_f)))), ...
      ff_dop, (abs(fftshift(fft(ro_GPS_BoC_0_10_dop_f))))   )
 xlabel('MHz')
+
+
+hF = figure(hF + 1);
+maxx = max(10*log10(abs((fftshift(fft(ro_GPS_BoC_0_10_dop.*cos_df_dop))))));
+ff_dop_RF = ff_dop + 1.023*farr(f_index);
+plot(ff_dop_RF, 10*log10((abs(fftshift(fft(ro_our_dop))))) - maxx, ...
+     ff_dop_RF, 10*log10(abs((fftshift(fft(ro_GPS_BoC_0_10_dop.*cos_df_dop))))) - maxx) 
+xlabel('MHz')
+ylabel('dB')
+title('Power spectrum density for GPS L5 signal and selected signal')
+grid on
