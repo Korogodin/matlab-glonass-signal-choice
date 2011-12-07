@@ -72,7 +72,7 @@ load([path_to_results '/InterSysJam_BPSK_L2_GloVT_mean.mat'], 'InterSysJam_BPSK_
 
 % Параметры нашего сигнала
 BOCsin = 1; BOCcos = 2; BPSK = 3;
-Signal_Type = 3; % 1 - BOCsin; 2 - BOCcos; 3 - BPSK.
+Signal_Type = 1; % 1 - BOCsin; 2 - BOCcos; 3 - BPSK.
 
 load([pwd '/ro/Td.mat']);
 
@@ -91,9 +91,12 @@ offset_x2 = offset_x1*2;
 offset_for_05_old = 1e11;
 offset_for_1_old = 1e11;
 N_ro_dop_old = 0;
-for f_index = 1:fmax
-    for n8 = 1:80
-        for m8 = 1:80     
+
+ro_GLO_ST_dop_all = zeros(lit_size, 15881);
+ro_GLO_VT_dop_all = zeros(lit_size, 15881);
+for f_index = 8%1:fmax
+    for n8 = 2.5*8%1:80
+        for m8 = 5*8%1:80     
 
             do_out = 1;
             
@@ -113,7 +116,7 @@ for f_index = 1:fmax
                     if (~isnan(InterSysJam_BoCsin_L2_GloST(m8, n8, f_index, lit_index))) && ...
                             (~isnan(InterSysJam_BoCsin_L2_GloVT(m8, n8, f_index, lit_index)))
                         do_out = 0;
-                        break;
+%                         break;
                     end
                 elseif Signal_Type == BOCcos
                     if (~isnan(InterSysJam_BoCcos_L2_GloST(m8, n8, f_index, lit_index))) && ...
@@ -176,7 +179,9 @@ for f_index = 1:fmax
                 cos_df_dop = exp(1i*2*pi*dFreq*( (1:N_ro_dop) - ((max([N_ro N_ro_05]) - 1)/2 + 1) )*Td); % Дополненный справа
                 
                 ro_GLO_ST_dop_f = cos_df_dop.*ro_GLO_ST_dop;
-                ro_GLO_VT_dop_f = cos_df_dop.*ro_GLO_VT_dop;                
+                ro_GLO_VT_dop_f = cos_df_dop.*ro_GLO_VT_dop;    
+                ro_GLO_ST_dop_all(lit_index, :) = ro_GLO_ST_dop_f;
+                ro_GLO_VT_dop_all(lit_index, :) = ro_GLO_VT_dop_f;
                 ro_our_f =  ro_our_dop; 
 
                 % Расчет интегралов - коэффициентов спектрального разделения
@@ -242,23 +247,23 @@ end
 hF = 0;
 
 
-for i = 1:fmax
-    hF = figure(hF+1);
-    if (Signal_Type == BOCsin)
-        pcolor((1:80)/8, (1:80)/8, InterSysJam_BoCsin_L2_GloST_mean(1:80,1:80, i));
-        xlabel('n')
-        ylabel('m')
-    elseif (Signal_Type == BOCcos)
-        pcolor((1:80)/8, (1:80)/8, InterSysJam_BoCcos_L2_GloST_mean(1:80,1:80, i));
-        xlabel('n')
-        ylabel('m')
-    elseif (Signal_Type == BPSK)
-        plot((1:80)/8, InterSysJam_BPSK_L2_GloST_mean(1:80, i));        
-        xlabel('n')
-        ylabel('k_cd')
-    end
-    title(sprintf('Normalized freq = %.0f', farr(i)));
-end
+% for i = 1:fmax
+%     hF = figure(hF+1);
+%     if (Signal_Type == BOCsin)
+%         pcolor((1:80)/8, (1:80)/8, InterSysJam_BoCsin_L2_GloST_mean(1:80,1:80, i));
+%         xlabel('n')
+%         ylabel('m')
+%     elseif (Signal_Type == BOCcos)
+%         pcolor((1:80)/8, (1:80)/8, InterSysJam_BoCcos_L2_GloST_mean(1:80,1:80, i));
+%         xlabel('n')
+%         ylabel('m')
+%     elseif (Signal_Type == BPSK)
+%         plot((1:80)/8, InterSysJam_BPSK_L2_GloST_mean(1:80, i));        
+%         xlabel('n')
+%         ylabel('k_cd')
+%     end
+%     title(sprintf('Normalized freq = %.0f', farr(i)));
+% end
 
 hF = figure(hF + 1);
 plot(1:N_ro, ro_our, 1:N_ro_1, ro_GLO_VT, 1:N_ro_dop, ro_GLO_VT_dop, ...
@@ -274,4 +279,19 @@ plot(ff_dop, (abs(fftshift(fft(ro_our_dop)))), ...
      ff_dop, abs((fftshift(fft(ro_GLO_VT_dop.*cos_df_dop)))), ...
      ff_dop, (abs(fftshift(fft(ro_our_f)))), ...
      ff_dop, (abs(fftshift(fft(ro_GLO_VT_dop_f))))   )
+xlabel('MHz')
+
+hF = figure(hF + 1);
+ff_dop = ff_dop + 1.023 * farr(f_index);
+for jj = 1:lit_size
+    plot( ...
+         ff_dop, (abs(fftshift(fft(ro_GLO_ST_dop_all(jj, :))))), ...
+         ff_dop, (abs(fftshift(fft(ro_GLO_VT_dop_all(jj, :)))))   );
+    hold on
+end
+plot(ff_dop, (abs(fftshift(fft(ro_our_f)))), 'r')
+hold off
+grid on
+title('GLONASS FDMA L2 signals and BOC_{sin}(5, 2.5) at f_n = 1217');
+ 
 xlabel('MHz')

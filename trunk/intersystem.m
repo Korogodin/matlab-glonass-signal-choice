@@ -63,7 +63,7 @@ load([path_to_results '/InterSysJam_BPSK_L1_BoC_0_10.mat']);
 
 % Параметры нашего сигнала
 BOCsin = 1; BOCcos = 2; BPSK = 3;
-Signal_Type = 2; % 1 - BOCsin, 2 - BOCcos, 3 - BPSK
+Signal_Type = 1; % 1 - BOCsin, 2 - BOCcos, 3 - BPSK
 
 load([pwd '/ro/Td.mat']);
 
@@ -101,12 +101,12 @@ f_index_old = 0;
 %     for n8 = n8
 %         for m8 = m8 
             
-for f_index = 1:fmax
-    for n8 = 1:80
-        for m8 = 1:80    
-% for f_index = 8
-%     for n8 = 2
-%         for m8 = 4*8   
+% for f_index = 1:fmax
+%     for n8 = 1:80
+%         for m8 = 1:80    
+for f_index = 8
+    for n8 = 2.5*8
+        for m8 = 5*8   
 
             if m8 < n8
                 if Signal_Type ~= BPSK
@@ -124,7 +124,7 @@ for f_index = 1:fmax
                             (~isnan(InterSysJam_BoCsin_L1_BoC_10_5(m8, n8, f_index))) && ...
                             (~isnan(InterSysJam_BoCsin_L1_BoC_0_1(m8, n8, f_index))) && ...
                             (~isnan(InterSysJam_BoCsin_L1_BoC_0_10(m8, n8, f_index)))
-                        continue;
+%                         continue;
                     end
 %                 end
             elseif Signal_Type == BOCcos
@@ -292,3 +292,24 @@ plot(ff_dop, (abs(fftshift(fft(ro_our_dop)))), ...
      ff_dop, (abs(fftshift(fft(ro_our_f)))), ...
      ff_dop, (abs(fftshift(fft(ro_GPS_BoC_10_5_dop_f))))   )
 xlabel('MHz')
+
+k_JN0_GPS_L1_P = -3;
+k_JN0_GPS_L1_M = +0.5;
+k_JN0_GPS_L1_L1C = +1.5;
+k_JN0_GLO_L1_L1OF = -2.5;
+k_JN0_GLO_L1_L1SF = -2.5;
+
+hF = figure(hF + 1);
+maxx = max(10*log10(abs((fftshift(fft(ro_GPS_BoC_0_1_dop.*cos_df_dop))))));
+ff_dop_RF = ff_dop + 1.023*farr(f_index);
+plot(ff_dop_RF, 10*log10((abs(fftshift(fft(ro_our_dop))))) - maxx, ...
+     ff_dop_RF, 10*log10(abs((fftshift(fft(ro_GPS_BoC_10_5_dop.*cos_df_dop))))) + k_JN0_GPS_L1_M - maxx, ...
+     ff_dop_RF, 10*log10(abs((fftshift(fft(ro_GPS_BoC_0_10_dop.*cos_df_dop))))) + k_JN0_GPS_L1_P - maxx, ...
+     ff_dop_RF, 10*log10(abs((fftshift(fft(ro_GPS_BoC_0_1_dop.*cos_df_dop))))) - maxx, ...
+     ff_dop_RF, 10*log10(10/11*abs((fftshift(fft(ro_GPS_BoC_1_1_dop.*cos_df_dop)))) + 1/11*abs((fftshift(fft(ro_GPS_BoC_1_1_dop.*cos_df_dop))))) + k_JN0_GPS_L1_L1C - maxx) 
+xlabel('MHz')
+ylabel('dB')
+title('Power spectrum density for L1 GPS signals and selected signal')
+grid on
+
+
