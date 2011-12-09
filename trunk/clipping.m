@@ -42,20 +42,24 @@ m8max = 80; n8max = 80;
 OpenSignal = 1; CloseSignal = 2; % Сигнал ОД или СД
 Access_Type = 2;
 
+% for Signal_Type = 1:3
+% for Access_Type = 1:2
+
 if Access_Type == OpenSignal
     Access_str = 'open';
     Threshold_RA = -84; % Порог по РА
     Threshold_Pomex = Pomexoyst_BPSK(0.5*8);
     Threshold_Accur = 1/Beta_BPSK(0.5*8);
     Threshold_Intra = InSysJam_BPSK(0.5*8);
-    Threshold_Complexity = Complexity_BoCsin(1*8, 1*8, 3);
+    Threshold_Complexity = Complexity_BoCsin(1*8, 1*8, 8);
 elseif Access_Type == CloseSignal
     Access_str = 'secure';
-    Threshold_RA = -90; % Порог по РА
+    Threshold_RA = -87; % Порог по РА
     Threshold_Pomex = Pomexoyst_BPSK(5*8);
     Threshold_Accur = 1/Beta_BPSK(5*8);
     Threshold_Intra = InSysJam_BPSK(5*8);
-    Threshold_Complexity = Complexity_BoCsin(10*8, 5*8, 3);
+    Threshold_Complexity = Complexity_BoCsin(10*8, 5*8, 8);
+%     Threshold_Complexity = Complexity_BPSK(10*8, 8);
 end
 
     fprintf('{| class="wikitable sortable" border="1" \n');
@@ -80,6 +84,32 @@ end
     fprintf('!''''k''''<sub>cd,intra</sub>, dB \n')
     fprintf('!Complexity, scores')
     
+if Access_Type == OpenSignal
+    if Signal_Type == BOCsin
+        fid_BOCsin = fopen('stuff/complexity_stuff/L1OC_BOCsin.txt', 'w');
+    elseif Signal_Type == BOCcos
+        fid_BOCcos = fopen('stuff/complexity_stuff/L1OC_BOCcos.txt', 'w');
+    elseif Signal_Type == BPSK
+        fid_BPSK = fopen('stuff/complexity_stuff/L1OC_BPSK.txt', 'w');
+    end
+elseif Access_Type == CloseSignal
+    if Signal_Type == BOCsin
+        fid_BOCsin = fopen('stuff/complexity_stuff/L1SC_BOCsin.txt', 'w');
+    elseif Signal_Type == BOCcos
+        fid_BOCcos = fopen('stuff/complexity_stuff/L1SC_BOCcos.txt', 'w');
+    elseif Signal_Type == BPSK
+        fid_BPSK = fopen('stuff/complexity_stuff/L1SC_BPSK.txt', 'w');
+    end
+end
+
+Signals_BOCsin_L1OC = [NaN NaN NaN];
+Signals_BOCcos_L1OC = [NaN NaN NaN];
+Signals_BPSK_L1OC = [NaN NaN];
+Signals_BOCsin_L1SC = [NaN NaN NaN];
+Signals_BOCcos_L1SC = [NaN NaN NaN];
+Signals_BPSK_L1SC = [NaN NaN];
+
+
 counter = 0;    
 for n8 = 1:80
     for m8 = 1:80
@@ -109,6 +139,16 @@ for n8 = 1:80
                                         fprintf('|| %.1f ', InSysJam_BoCsin(m8, n8));
                                         fprintf('|| %.1f ', Complexity_BoCsin(m8, n8, freq_index));
                                         counter = counter + 1;
+                                        fprintf(fid_BOCsin, '%.3f %.3f \n', m8/8, n8/8);
+                                        if Access_Type == OpenSignal
+                                            Signals_BOCsin_L1OC(counter, 1) = m;
+                                            Signals_BOCsin_L1OC(counter, 2) = n;
+                                            Signals_BOCsin_L1OC(counter, 3) = freq_index;
+                                        elseif Access_Type == CloseSignal
+                                            Signals_BOCsin_L1SC(counter, 1) = m;
+                                            Signals_BOCsin_L1SC(counter, 2) = n;
+                                            Signals_BOCsin_L1SC(counter, 3) = freq_index;
+                                        end
                                     end
                                 end
                             end
@@ -133,6 +173,16 @@ for n8 = 1:80
                                         fprintf('|| %.1f ', InSysJam_BoCcos(m8, n8));
                                         fprintf('|| %.1f ', Complexity_BoCcos(m8, n8, freq_index));
                                         counter = counter + 1;
+                                        fprintf(fid_BOCcos, '%.3f %.3f \n', m8/8, n8/8);
+                                        if Access_Type == OpenSignal
+                                            Signals_BOCcos_L1OC(counter, 1) = m;
+                                            Signals_BOCcos_L1OC(counter, 2) = n;
+                                            Signals_BOCcos_L1OC(counter, 3) = freq_index;
+                                        elseif Access_Type == CloseSignal
+                                            Signals_BOCcos_L1SC(counter, 1) = m;
+                                            Signals_BOCcos_L1SC(counter, 2) = n;
+                                            Signals_BOCcos_L1SC(counter, 3) = freq_index;
+                                        end                                        
                                     end
                                 end
                             end
@@ -156,6 +206,16 @@ for n8 = 1:80
                                         fprintf('|| %.1f ', InSysJam_BPSK(n8));
                                         fprintf('|| %.1f ', Complexity_BPSK(n8, freq_index));
                                         counter = counter + 1;
+                                        fprintf(fid_BPSK, '%.3f \n', n8/8);
+                                        if Access_Type == OpenSignal
+                                            Signals_BPSK_L1OC(counter, 1) = m;
+                                            Signals_BPSK_L1OC(counter, 2) = n;
+                                            Signals_BPSK_L1OC(counter, 3) = freq_index;
+                                        elseif Access_Type == CloseSignal
+                                            Signals_BPSK_L1SC(counter, 1) = m;
+                                            Signals_BPSK_L1SC(counter, 2) = n;
+                                            Signals_BPSK_L1SC(counter, 3) = freq_index;
+                                        end                                        
                                     end
                                 end
                             end
@@ -170,3 +230,34 @@ for n8 = 1:80
     end
 end
 fprintf('\n|}\n');
+if Signal_Type == BPSK
+    fclose(fid_BPSK);
+elseif Signal_Type == BOCsin
+    fclose(fid_BOCsin);
+elseif Signal_Type == BOCcos
+    fclose(fid_BOCcos);
+end
+
+if Signal_Type == BOCsin
+    if Access_Type == OpenSignal
+        save('results/clipping/Signals_BOCsin_L1OC.mat', 'Signals_BOCsin_L1OC');
+    elseif Access_Type == CloseSignal
+        save('results/clipping/Signals_BOCsin_L1SC.mat', 'Signals_BOCsin_L1SC');
+    end
+elseif Signal_Type == BOCcos
+    if Access_Type == OpenSignal
+        save('results/clipping/Signals_BOCcos_L1OC.mat', 'Signals_BOCcos_L1OC');
+    elseif Access_Type == CloseSignal
+        save('results/clipping/Signals_BOCcos_L1SC.mat', 'Signals_BOCcos_L1SC');
+    end
+elseif Signal_Type == BPSK
+    if Access_Type == OpenSignal
+        save('results/clipping/Signals_BPSK_L1OC.mat', 'Signals_BPSK_L1OC')
+    elseif Access_Type == CloseSignal
+        save('results/clipping/Signals_BPSK_L1SC.mat', 'Signals_BPSK_L1SC')
+    end
+end
+
+    
+% end 
+% end
