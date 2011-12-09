@@ -15,12 +15,12 @@ clc
 
 n8max = 80;
 m8max = 80;
-farr = 1558:1573; fmax = length(farr); % Нормированный центральные частоты
+farr = 1164:1184; fmax = length(farr); % Нормированный центральные частоты
 
-path_to_stuff = '/complexity_stuff/L1'; 
+path_to_stuff = '/complexity_stuff/L3'; 
 % Путь должен существовать, а в нем каталоги png и fig
 % Туда будем класть картинки, туда же сдедует положить html
-path_to_results = [pwd '/results/complexity_L1'];
+path_to_results = [pwd '/results/complexity_L3'];
 path_to_ro = [pwd '/ro'];
 
 % С помощью данной секции можно создать пустые массивы
@@ -30,11 +30,12 @@ path_to_ro = [pwd '/ro'];
 % save([path_to_results '/Complexity_BoCsin.mat'], 'Complexity_BoCsin');
 % save([path_to_results '/Complexity_BoCcos.mat'], 'Complexity_BoCcos');
 % save([path_to_results '/Complexity_BPSK.mat'], 'Complexity_BPSK');
+% return
 load([path_to_results '/Complexity_BoCsin.mat'], 'Complexity_BoCsin');
 load([path_to_results '/Complexity_BoCcos.mat'], 'Complexity_BoCcos');
 load([path_to_results '/Complexity_BPSK.mat'], 'Complexity_BPSK');
 
-Signals_L1; % Параметры приемлимых сигналов
+% Signals_L1; % Параметры приемлимых сигналов
 
 % Параметры нашего сигнала
 BOCsin = 1; BOCcos = 2; BPSK = 3;
@@ -61,20 +62,20 @@ if Signal_Type == BOCsin
     Nsig = size(BoCsin_Freq_L1_num, 1);
     Sig_Arr = BoCsin_Freq_L1_num;
     if Table_Type == T_wiki
-        fprintf('|+ Partial complexity of BoC<sub>sin</sub> signal, scores\n');    
+        fprintf('|+ Partial complexity of BoC<sub>sin</sub> L3 signals, scores\n');    
     end
 elseif Signal_Type == BOCcos
     Nsig = size(BoCcos_Freq_L1_num, 1);
     Sig_Arr = BoCcos_Freq_L1_num;    
     if Table_Type == T_wiki
-        fprintf('|+ Partial complexity of BoC<sub>cos</sub> signal, scores\n');    
+        fprintf('|+ Partial complexity of BoC<sub>cos</sub> L3 signals, scores\n');    
     end  
 elseif Signal_Type == BPSK
     Nsig = size(BPSK_Freq_L1_num, 1);
     Sig_Arr = zeros(Nsig, 3);
     Sig_Arr(:, 2:3) = BPSK_Freq_L1_num;
     if Table_Type == T_wiki
-        fprintf('|+ Partial complexity of BPSK signal, scores\n');    
+        fprintf('|+ Partial complexity of BPSK L3 signals, scores\n');    
     end
 end
 
@@ -195,7 +196,7 @@ for n8 = 1:n8max
             fprintf('|| %.1f ', round((Sum_Score)*10)/10);
         end
         for freq_index = 1:fmax
-            Score_5 = 10 * ((freq_index ~= 3)&&(freq_index ~= 8)&&(freq_index ~= 13));
+            Score_5 = 10 * ((freq_index ~= 2)&&(freq_index ~= 7)&&(freq_index ~= 12)&&(freq_index ~= 17));
             Score_Center = 3*abs(farr(freq_index) - (max(farr) + min(farr))/2);
 %             Sum_Score = Score_SignalBand + Score_Peak + Score_n + Score_m
 %             + Score_5;
