@@ -71,7 +71,7 @@ Hd_old = 0;
         
 for f_index = 12%1:fmax
     for n8 = 10*8%1:80
-        for m8 = 5*8%1:80    
+        for m8 = 3.75*8%1:80    
 
             if m8 < n8
                 if Signal_Type ~= BPSK
@@ -81,11 +81,11 @@ for f_index = 12%1:fmax
 
             if Signal_Type == BOCsin 
                 if (~isnan(InterSysJam_BoCsin_L3_BoC_0_10(m8, n8, f_index)))
-                    continue;
+%                     continue;
                 end
             elseif Signal_Type == BOCcos
                 if (~isnan(InterSysJam_BoCcos_L3_BoC_0_10(m8, n8, f_index)))
-                    continue;
+%                     continue;
                 end
             elseif Signal_Type == BPSK
                 if (~isnan(InterSysJam_BPSK_L3_BoC_0_10(n8, f_index)))
@@ -223,7 +223,9 @@ maxx = max(10*log10(abs((fftshift(fft(ro_GPS_BoC_0_10_dop.*cos_df_dop))))));
 ff_dop_RF = ff_dop + 1.023*farr(f_index);
 plot(ff_dop_RF, 10*log10((abs(fftshift(fft(ro_our_dop))))) - maxx, ...
      ff_dop_RF, 10*log10(abs((fftshift(fft(ro_GPS_BoC_0_10_dop.*cos_df_dop))))) - maxx) 
-xlabel('MHz')
+xlabel('f, MHz')
 ylabel('dB')
 title('Power spectrum density for GPS L5 signal and selected signal')
 grid on
+xlim([1150 1235])
+ylim([-15 3])

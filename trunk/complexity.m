@@ -21,7 +21,6 @@ path_to_stuff = '/complexity_stuff/L1';
 % Путь должен существовать, а в нем каталоги png и fig
 % Туда будем класть картинки, туда же сдедует положить html
 path_to_results = [pwd '/results/complexity_L1'];
-path_to_ro = [pwd '/ro'];
 
 % С помощью данной секции можно создать пустые массивы
 % Complexity_BoCsin = nan(m8max, n8max, fmax);
