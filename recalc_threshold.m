@@ -8,7 +8,11 @@ function Ch = recalc_threshold( C, g, h, infC, supC )
 %@param supC - верхний новый
 %*/
 
-Ch = g + (h-g)* (C - infC) ./ (supC - infC);
+if supC ~= infC
+    Ch = g + (h-g)* (C - infC) ./ (supC - infC);
+else
+    Ch = 0;
+end
 
 end
 
