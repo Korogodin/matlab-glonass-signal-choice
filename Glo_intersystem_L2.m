@@ -282,16 +282,15 @@ plot(ff_dop, (abs(fftshift(fft(ro_our_dop)))), ...
 xlabel('MHz')
 
 hF = figure(hF + 1);
-ff_dop = ff_dop + 1.023 * farr(f_index);
+ff_dop_GLO_L2 = ff_dop + 1.023 * farr(f_index);
 for jj = 1:lit_size
     plot( ...
-         ff_dop, (abs(fftshift(fft(ro_GLO_ST_dop_all(jj, :))))), ...
-         ff_dop, (abs(fftshift(fft(ro_GLO_VT_dop_all(jj, :)))))   );
+         ff_dop_GLO_L2, (abs(fftshift(fft(ro_GLO_ST_dop_all(jj, :))))), ...
+         ff_dop_GLO_L2, (abs(fftshift(fft(ro_GLO_VT_dop_all(jj, :)))))   );
     hold on
 end
-plot(ff_dop, (abs(fftshift(fft(ro_our_f)))), 'r')
+plot(ff_dop_GLO_L2, (abs(fftshift(fft(ro_our_f)))), 'r')
 hold off
 grid on
 title('GLONASS FDMA L2 signals and BOC_{sin}(5, 2.5) at f_n = 1217');
- 
-xlabel('MHz')
+xlabel('f, MHz')

@@ -15,8 +15,8 @@
 %@param farr - массив номированных несущих частот
 %*/
 
-clear 
-close all
+% clear 
+% close all
 clc
 
 path_to_ro = [pwd '/ro'];
@@ -63,7 +63,7 @@ load([path_to_results '/InterSysJam_BPSK_L1_BoC_0_10.mat']);
 
 % Параметры нашего сигнала
 BOCsin = 1; BOCcos = 2; BPSK = 3;
-Signal_Type = 1; % 1 - BOCsin, 2 - BOCcos, 3 - BPSK
+Signal_Type = 3; % 1 - BOCsin, 2 - BOCcos, 3 - BPSK
 
 load([pwd '/ro/Td.mat']);
 
@@ -104,15 +104,16 @@ f_index_old = 0;
 % for f_index = 1:fmax
 %     for n8 = 1:80
 %         for m8 = 1:80    
-for f_index = 8
+for f_index = 7
     for n8 = 2.5*8
-        for m8 = 5*8   
+        for m8 = 3*8   
 
             if m8 < n8
                 if Signal_Type ~= BPSK
                     continue;
                 end
             end
+            
             if ((m8+n8)/8 > f_index + 2) || ((m8+n8)/8 > (16-f_index) +2) % Если этот сигнал не влазиет в полосу
                 continue;
             end
@@ -134,7 +135,7 @@ for f_index = 8
                             (~isnan(InterSysJam_BoCcos_L1_BoC_10_5(m8, n8, f_index))) && ...
                             (~isnan(InterSysJam_BoCcos_L1_BoC_0_1(m8, n8, f_index))) && ...
                             (~isnan(InterSysJam_BoCcos_L1_BoC_0_10(m8, n8, f_index)))
-                        continue;
+%                         continue;
                     end
 %                 end
             elseif Signal_Type == BPSK
@@ -144,7 +145,7 @@ for f_index = 8
                             (~isnan(InterSysJam_BPSK_L1_BoC_10_5(n8, f_index))) && ...
                             (~isnan(InterSysJam_BPSK_L1_BoC_0_1(n8, f_index))) && ...
                             (~isnan(InterSysJam_BPSK_L1_BoC_0_10(n8, f_index)))
-                        continue;
+%                         continue;
                     end                
 %                 end
             end
@@ -259,39 +260,39 @@ end
 hF = 0;
 
 
-for i = 1:fmax
-    hF = figure(hF+1);
-    if (Signal_Type == BOCsin)
-        pcolor((1:80)/8, (1:80)/8, InterSysJam_BoCsin_L1_BoC_1_1(1:80,1:80, i));
-        xlabel('n')
-        ylabel('m')
-    elseif (Signal_Type == BOCcos)
-        pcolor((1:80)/8, (1:80)/8, InterSysJam_BoCcos_L1_BoC_1_1(1:80,1:80, i));
-        xlabel('n')
-        ylabel('m')
-    elseif (Signal_Type == BPSK)
-        plot((1:80)/8, InterSysJam_BPSK_L1_BoC_1_1(1:80, i));        
-        xlabel('n')
-        ylabel('k_cd')
-    end
-    title(sprintf('Normalized freq = %.0f', farr(i)));
-end
-
-hF = figure(hF + 1);
-plot(1:N_ro, ro_our, 1:N_ro_1, ro_GPS_BoC_10_5, 1:N_ro_1, ro_GPS_BoC_10_5.*cos_df, ...
-     1:N_ro_dop, ro_our_f, 1:N_ro_dop, ro_GPS_BoC_10_5_dop_f);
-title('All')
-
+% for i = 1:fmax
+%     hF = figure(hF+1);
+%     if (Signal_Type == BOCsin)
+%         pcolor((1:80)/8, (1:80)/8, InterSysJam_BoCsin_L1_BoC_1_1(1:80,1:80, i));
+%         xlabel('n')
+%         ylabel('m')
+%     elseif (Signal_Type == BOCcos)
+%         pcolor((1:80)/8, (1:80)/8, InterSysJam_BoCcos_L1_BoC_1_1(1:80,1:80, i));
+%         xlabel('n')
+%         ylabel('m')
+%     elseif (Signal_Type == BPSK)
+%         plot((1:80)/8, InterSysJam_BPSK_L1_BoC_1_1(1:80, i));        
+%         xlabel('n')
+%         ylabel('k_cd')
+%     end
+%     title(sprintf('Normalized freq = %.0f', farr(i)));
+% end
+% 
+% hF = figure(hF + 1);
+% plot(1:N_ro, ro_our, 1:N_ro_1, ro_GPS_BoC_10_5, 1:N_ro_1, ro_GPS_BoC_10_5.*cos_df, ...
+%      1:N_ro_dop, ro_our_f, 1:N_ro_dop, ro_GPS_BoC_10_5_dop_f);
+% title('All')
+% 
 ff = (-(N_ro/2 - 1):1:N_ro/2)/(Td*1e6)/N_ro; % Ось частот для недополненной АКФ
 ff_dop = (-(N_ro_dop/2 - 1):1:N_ro_dop/2)/(Td*1e6)/N_ro_dop;  % Ось частот для дополненной АКФ
-
-hF = figure(hF + 1);
-plot(ff_dop, (abs(fftshift(fft(ro_our_dop)))), ...
-     ff_dop, (abs(fftshift(fft(ro_GPS_BoC_10_5_dop)))), ...
-     ff_dop, abs((fftshift(fft(ro_GPS_BoC_10_5_dop.*cos_df_dop)))), ...
-     ff_dop, (abs(fftshift(fft(ro_our_f)))), ...
-     ff_dop, (abs(fftshift(fft(ro_GPS_BoC_10_5_dop_f))))   )
-xlabel('MHz')
+% 
+% hF = figure(hF + 1);
+% plot(ff_dop, (abs(fftshift(fft(ro_our_dop)))), ...
+%      ff_dop, (abs(fftshift(fft(ro_GPS_BoC_10_5_dop)))), ...
+%      ff_dop, abs((fftshift(fft(ro_GPS_BoC_10_5_dop.*cos_df_dop)))), ...
+%      ff_dop, (abs(fftshift(fft(ro_our_f)))), ...
+%      ff_dop, (abs(fftshift(fft(ro_GPS_BoC_10_5_dop_f))))   )
+% xlabel('MHz')
 
 k_JN0_GPS_L1_P = -3;
 k_JN0_GPS_L1_M = +0.5;
@@ -302,14 +303,23 @@ k_JN0_GLO_L1_L1SF = -2.5;
 hF = figure(hF + 1);
 maxx = max(10*log10(abs((fftshift(fft(ro_GPS_BoC_0_1_dop.*cos_df_dop))))));
 ff_dop_RF = ff_dop + 1.023*farr(f_index);
-plot(ff_dop_RF, 10*log10((abs(fftshift(fft(ro_our_dop))))) - maxx, ...
+plot(nan(1,1), nan(1,1), ...
      ff_dop_RF, 10*log10(abs((fftshift(fft(ro_GPS_BoC_10_5_dop.*cos_df_dop))))) + k_JN0_GPS_L1_M - maxx, ...
      ff_dop_RF, 10*log10(abs((fftshift(fft(ro_GPS_BoC_0_10_dop.*cos_df_dop))))) + k_JN0_GPS_L1_P - maxx, ...
      ff_dop_RF, 10*log10(abs((fftshift(fft(ro_GPS_BoC_0_1_dop.*cos_df_dop))))) - maxx, ...
      ff_dop_RF, 10*log10(10/11*abs((fftshift(fft(ro_GPS_BoC_1_1_dop.*cos_df_dop)))) + 1/11*abs((fftshift(fft(ro_GPS_BoC_1_1_dop.*cos_df_dop))))) + k_JN0_GPS_L1_L1C - maxx) 
-xlabel('MHz')
+hold on
+p = plot(ff_dop_RF, 10*log10((abs(fftshift(fft(ro_our_dop))))) - maxx);
+set(p,'Color','blue','LineWidth',3)
+ for jj = 1:lit_size
+    plot( NaN, NaN, NaN, NaN, NaN, NaN, NaN, NaN, NaN, NaN, ...
+         ff_dop_GLO_L1, 10*log10(abs(fftshift(fft(ro_GLO_ST_dop_all(jj, :))))) - maxx + k_JN0_GLO_L1_L1OF, ...
+         ff_dop_GLO_L1, 10*log10(abs(fftshift(fft(ro_GLO_VT_dop_all(jj, :))))) - maxx + k_JN0_GLO_L1_L1SF);
+end
+hold off
+xlabel('f, MHz')
 ylabel('dB')
 title('Power spectrum density for L1 GPS signals and selected signal')
 grid on
-
-
+xlim([1555 1615])
+ylim([-20 1])

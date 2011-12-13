@@ -62,7 +62,7 @@ OpenSignal = 1; CloseSignal = 2; % Сигнал ОД или СД
 
 
 counter_all = 0;
-for Access_Type = 1:1
+for Access_Type = 2:2
     
     fprintf('{| class="wikitable sortable" border="1" \n');
     
@@ -116,11 +116,11 @@ for Access_Type = 1:1
     end
     fprintf('!scores');
     
-    for Signal_Type = 1:3
+    for Signal_Type = 3:3
 
 
         if Access_Type == OpenSignal
-            max_HalfBand = 1 + 1;
+            max_HalfBand = 1 + 1 + 100;
             if Signal_Type == BOCsin
                 fid_BOCsin = fopen('stuff/complexity_stuff/L2OC_BOCsin.txt', 'w');
             elseif Signal_Type == BOCcos
@@ -129,7 +129,7 @@ for Access_Type = 1:1
                 fid_BPSK = fopen('stuff/complexity_stuff/L2OC_BPSK.txt', 'w');
             end
         elseif Access_Type == CloseSignal
-            max_HalfBand = 5 + 2.5 + 0.25;
+            max_HalfBand = 5 + 2.5;
             if Signal_Type == BOCsin
                 fid_BOCsin = fopen('stuff/complexity_stuff/L2SC_BOCsin.txt', 'w');
             elseif Signal_Type == BOCcos
@@ -165,7 +165,7 @@ for Access_Type = 1:1
                                     if Complexity_BoCsin(m8, n8, freq_index) <= Threshold_Complexity
                                         if ((m+n + farr(freq_index)) <= (farr(end) + 1)) && ((farr(freq_index) - (m+n)) >= (farr(1) - 1))...
                                                 && ((m+n) <= max_HalfBand)
-                                            if (Access_Type == OpenSignal)||(n == 2.5)||(n == 2.25)||(n == 2.625)||(n == n)
+                                            if (Access_Type == OpenSignal)||(n == 2.5)||(n == 2.625)%||(n == 2.25)
                                                 fprintf('\n|- align="center"\n');
                                                 fprintf('| BOC<sub>sin</sub>');
                                                 fprintf('|| %.3f ', m8/8);
@@ -205,7 +205,7 @@ for Access_Type = 1:1
                                     if Complexity_BoCcos(m8, n8, freq_index) <= Threshold_Complexity
                                         if ((m+n + farr(freq_index)) <= (farr(end) + 1)) && ((farr(freq_index) - (m+n)) >= (farr(1) - 1))...
                                                 && ((m+n) <= max_HalfBand)
-                                            if (Access_Type == OpenSignal)||(n == 2.5)||(n == 2.25)||(n == 2.625)||(n == n)
+                                            if (Access_Type == OpenSignal)||(n == 2.5)||(n == 2.625)%||(n == 2.25)
                                                 fprintf('\n|- align="center"\n');
                                                 fprintf('| BOC<sub>cos</sub>');
                                                 fprintf('|| %.3f ', m8/8);
@@ -245,7 +245,7 @@ for Access_Type = 1:1
                                     if Complexity_BPSK(n8, freq_index) <= Threshold_Complexity
                                         if ((m+n + farr(freq_index)) <= (farr(end) + 1)) && ((farr(freq_index) - (m+n)) >= (farr(1) - 1))...
                                                 && ((n) <= max_HalfBand)
-                                            if (Access_Type == OpenSignal)||(n == 2.5)||(n == 2.25)||(n == 2.625)||(n == n)
+                                            if (Access_Type == OpenSignal)||(n == 2.5)||(n == 2.625)%||(n == 2.25)
                                                 fprintf('\n|- align="center"\n');
                                                 fprintf('| BPSK');
                                                 fprintf('|| - ');

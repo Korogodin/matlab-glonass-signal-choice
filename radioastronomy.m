@@ -37,11 +37,13 @@ load([pwd '/ro/Td.mat']);
 RA_1 = 1610.6e6; % RA bandspace
 RA_2 = 1613.8e6;
 
-for n8 = 2.5*8%1:80
-    for m8 = 5*8%1:80  
+for n8 = 2.625*8%1:80
+    for m8 = 5.25*8%1:80  
          
-        if m8 < n8
-            continue;
+        if (Signal_Type ~= BPSK)
+            if m8 < n8
+                continue;
+            end
         end
         
         % Если уже всё посчитано, то идем дальше
@@ -51,11 +53,11 @@ for n8 = 2.5*8%1:80
                 end
         elseif Signal_Type == BOCcos
                 if (~max(isnan(Radioastronomy_BoCcos(m8, n8, :))))
-                    continue;
+%                     continue;
                 end
         elseif Signal_Type == BPSK
                 if (~max(isnan(Radioastronomy_BPSK(n8, :)))) 
-                    continue;
+%                     continue;
                 end                
         end
 
@@ -79,7 +81,7 @@ for n8 = 2.5*8%1:80
         fft_ro_our_dop = fft_ro_our_dop / norm_power;
         ff_dop = (-(N_ro_dop/2 - 1):1:N_ro_dop/2)/(Td)/N_ro_dop; % Ось частот для недополненной АКФ
         
-        for freq_index = 8%1:fmax
+        for freq_index = 9%1:fmax
             max_SP = -1;
             for jj = (N_ro_dop - 1)/2:N_ro_dop
                 if ff_dop(jj) < (RA_1 - farr_Hz(freq_index))
@@ -135,35 +137,39 @@ hF = 0;
 %     end
 % end
 
-for jj = 1:fmax
-    if Signal_Type == BOCsin
-        hF = figure(hF + 1);
-        pcolor((1:80)/8, (1:80)/8, Radioastronomy_BoCsin(:, :, jj))
-        xlabel('n')
-        ylabel('m')
-        zlabel('Max power density in RA span, dB')    
-    elseif Signal_Type == BOCcos
-        hF = figure(hF + 1);
-        pcolor((1:80)/8, (1:80)/8, Radioastronomy_BoCcos(:, :, jj))
-        xlabel('n')
-        ylabel('m')
-        zlabel('Max power density in RA span, dB')  
-    elseif Signal_Type == BPSK
-        hF = figure(hF + 1);
-        plot(1:80, Radioastronomy_BPSK(:, jj))
-        xlabel('n')
-        ylabel('Max power density in RA span, dB')    
-        grid on
-    end
-    title(sprintf('Normalized freq = %.0f', farr(jj)));
-end
+% for jj = 1:fmax
+%     if Signal_Type == BOCsin
+%         hF = figure(hF + 1);
+%         pcolor((1:80)/8, (1:80)/8, Radioastronomy_BoCsin(:, :, jj))
+%         xlabel('n')
+%         ylabel('m')
+%         zlabel('Max power density in RA span, dB')    
+%     elseif Signal_Type == BOCcos
+%         hF = figure(hF + 1);
+%         pcolor((1:80)/8, (1:80)/8, Radioastronomy_BoCcos(:, :, jj))
+%         xlabel('n')
+%         ylabel('m')
+%         zlabel('Max power density in RA span, dB')  
+%     elseif Signal_Type == BPSK
+%         hF = figure(hF + 1);
+%         plot(1:80, Radioastronomy_BPSK(:, jj))
+%         xlabel('n')
+%         ylabel('Max power density in RA span, dB')    
+%         grid on
+%     end
+%     title(sprintf('Normalized freq = %.0f', farr(jj)));
+% end
 
 
 hF = figure(hF + 1);
 min_lev = min(10*log10(fft_ro_our_dop));
 max_lev = max(10*log10(fft_ro_our_dop));
-plot(ff_dop/1e6, 10*log10(fft_ro_our_dop), ...
-    ([RA_1 RA_1] - farr_Hz(freq_index))/1e6, [min_lev max_lev], 'r', ...
-    ([RA_2 RA_2] - farr_Hz(freq_index))/1e6, [min_lev max_lev], 'r');
+ff_dop = ff_dop + 1.023*farr(freq_index);
+plot(ff_dop/1e6 + 1.023*farr(freq_index), 10*log10(fft_ro_our_dop), ...
+    ([RA_1 RA_1])/1e6, [min_lev max_lev], 'r', ...
+    ([RA_2 RA_2])/1e6, [min_lev max_lev], 'r');
 xlabel('f, MHz')
-ylabel('fft, dB')
+ylabel('PSD, dB/Hz')
+title('PSD in radioastronomy band for BOC_{sin}(5.25, 2.625) at 1566f_b')
+xlim([1608 1617]);
+grid on

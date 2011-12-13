@@ -44,7 +44,7 @@ Access_Type = 2;
 
 counter_all = 0;
 for Signal_Type = 1:3
-for Access_Type = 1:2
+for Access_Type = 1:1
 
 if Access_Type == OpenSignal
     Access_str = 'open';
