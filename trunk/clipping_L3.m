@@ -62,7 +62,7 @@ OpenSignal = 1; CloseSignal = 2; % Сигнал ОД или СД
 
 
 counter_all = 0;
-for Access_Type = 2:2
+for Access_Type = 1:1
     
     fprintf('{| class="wikitable sortable" border="1" \n');
     
@@ -116,7 +116,7 @@ for Access_Type = 2:2
     end
     fprintf('!scores');
     
-    for Signal_Type = 1:3
+    for Signal_Type = 1:1
 
 
         if Access_Type == OpenSignal

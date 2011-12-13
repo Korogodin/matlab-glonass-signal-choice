@@ -13,6 +13,9 @@ path_to_prop = [pwd '/results/prop_L1'];
 load([path_to_results_dir '/clipping/Signals_BOCsin_L1OC.mat'], 'Signals_BOCsin_L1OC');
 load([path_to_results_dir '/clipping/Signals_BOCcos_L1OC.mat'], 'Signals_BOCcos_L1OC');
 load([path_to_results_dir '/clipping/Signals_BPSK_L1OC.mat'], 'Signals_BPSK_L1OC')
+size_BOCsin = size(Signals_BOCsin_L1OC, 1)*(~isnan(Signals_BOCsin_L1OC(1,1)));
+size_BOCcos = size(Signals_BOCcos_L1OC, 1)*(~isnan(Signals_BOCcos_L1OC(1,1)));
+size_BPSK = size(Signals_BPSK_L1OC, 1)*(~isnan(Signals_BPSK_L1OC(1,1)));
 
 n8max = 80;
 m8max = 80;
@@ -701,7 +704,8 @@ end
             end   
         end
         
-        
+
+Table_Type = 2;
 % %%%%%%%%%%%%%%%%%%%%%%%%%%% RESULTS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % SC
 C_Compl_OC = 10;
@@ -714,9 +718,23 @@ C_InterNam_OC = 3;
 C_InterIm_OC = 1;
 C_IntraS_OC = 7;          
         
-    fprintf('{| class="wikitable sortable" border="1" \n');
-    fprintf('|+ Multi-objective optimization for L1OC signal\n');
+TopSize = 15;
+All_Signals_Size = size_BOCsin + size_BOCcos + size_BPSK;
+All_Signals_Norm = nan(All_Signals_Size, 1);
+All_Signals_index = 0;
 
+    fprintf('{| class="wikitable sortable" border="1" \n');
+    if Table_Type == 1
+        fprintf('|+ Multi-objective optimization for L1OC signal\n');
+    elseif Table_Type == 2
+        if TopSize < All_Signals_Size
+            fprintf('|+ Multi-objective optimization for L1OC signal (Top %.0f)\n', TopSize);
+        else
+            TopSize = All_Signals_Size;
+            fprintf('|+ Multi-objective optimization for L1OC signal\n');
+        end
+    end
+    
     fprintf('|- align="center"\n');
     fprintf('!Signal \n');
     fprintf('!Antijamming<br>w=%.2f \n', C_Pomex_OC);
@@ -730,127 +748,266 @@ C_IntraS_OC = 7;
     fprintf('!Intra<br>w=%.2f\n', C_IntraS_OC);
     fprintf('!Norm');    
     
-for i = 1:size(Signals_BOCsin_L1OC, 1)
+
+for i = 1:size_BOCsin
     norm_s = 0;
     n = Signals_BOCsin_L1OC(i, 2); n8 = n*8;
     m = Signals_BOCsin_L1OC(i, 1); m8 = m*8;
 
     freq = Signals_BOCsin_L1OC(i, 3);
     freq_index = freq - farr(1) + 1;    
-    fprintf('\n|- align="center"\n');
-    fprintf('|BoCsin(%.3f, %.3f) at %.0f<math>f_b</math> ', m, n, freq);
     
-    fprintf('|| %.3f ', Qual_BoCsin_L1OC(m8, n8, freq_index, Pomex));
+    if Table_Type == 1
+        fprintf('\n|- align="center"\n');
+        fprintf('|BoC<sub>sin</sub>(%.3f, %.3f) at %.0f<math>f_b</math> ', m, n, freq);
+        fprintf('|| %.3f ', Qual_BoCsin_L1OC(m8, n8, freq_index, Pomex));
+        fprintf('|| %.3f ', Qual_BoCsin_L1OC(m8, n8, freq_index, RA));
+        fprintf('|| %.3f ', Qual_BoCsin_L1OC(m8, n8, freq_index, Accur));
+        fprintf('|| %.3f ', Qual_BoCsin_L1OC(m8, n8, freq_index, MP));
+        fprintf('|| %.3f ', Qual_BoCsin_L1OC(m8, n8, freq_index, InterNam));
+        fprintf('|| %.3f ', Qual_BoCsin_L1OC(m8, n8, freq_index, InterIm));
+        fprintf('|| %.3f ', Qual_BoCsin_L1OC(m8, n8, freq_index, Search));
+        fprintf('|| %.3f ', Qual_BoCsin_L1OC(m8, n8, freq_index, Compl));
+        fprintf('|| %.3f ', Qual_BoCsin_L1OC(m8, n8, freq_index, IntraS));
+    end
+    
     norm_s = norm_s + (C_Pomex_OC*Qual_BoCsin_L1OC(m8, n8, freq_index, Pomex))^2;
-    
-    fprintf('|| %.3f ', Qual_BoCsin_L1OC(m8, n8, freq_index, RA));
     norm_s = norm_s + (C_RA_OC*Qual_BoCsin_L1OC(m8, n8, freq_index, RA))^2;
-    
-    fprintf('|| %.3f ', Qual_BoCsin_L1OC(m8, n8, freq_index, Accur));
     norm_s = norm_s + (C_Accur_OC*Qual_BoCsin_L1OC(m8, n8, freq_index, Accur))^2;
-    
-    fprintf('|| %.3f ', Qual_BoCsin_L1OC(m8, n8, freq_index, MP));
     norm_s = norm_s + (C_MP_OC*Qual_BoCsin_L1OC(m8, n8, freq_index, MP))^2;
-    
-    fprintf('|| %.3f ', Qual_BoCsin_L1OC(m8, n8, freq_index, InterNam));
     norm_s = norm_s + (C_InterNam_OC*Qual_BoCsin_L1OC(m8, n8, freq_index, InterNam))^2;
-
-    fprintf('|| %.3f ', Qual_BoCsin_L1OC(m8, n8, freq_index, InterIm));
     norm_s = norm_s + (C_InterIm_OC*Qual_BoCsin_L1OC(m8, n8, freq_index, InterIm))^2;
-
-    fprintf('|| %.3f ', Qual_BoCsin_L1OC(m8, n8, freq_index, Search));
     norm_s = norm_s + (C_Search_OC*Qual_BoCsin_L1OC(m8, n8, freq_index, Search))^2;
-
-    fprintf('|| %.3f ', Qual_BoCsin_L1OC(m8, n8, freq_index, Compl));
     norm_s = norm_s + (C_Compl_OC*Qual_BoCsin_L1OC(m8, n8, freq_index, Compl))^2;
-    
-    fprintf('|| %.3f ', Qual_BoCsin_L1OC(m8, n8, freq_index, IntraS));
     norm_s = norm_s + (C_IntraS_OC*Qual_BoCsin_L1OC(m8, n8, freq_index, IntraS))^2;
     
-    fprintf('|| %.4f ', sqrt(norm_s));
+    if Table_Type == 1
+        fprintf('|| %.4f ', sqrt(norm_s));
+    end
+    
+    All_Signals_index = All_Signals_index + 1;
+    All_Signals_Norm(All_Signals_index) = sqrt(norm_s);
 
+    if (m == 5)&&(n == 2.5)&&(farr(freq_index) == 1220)
+        our_inde = All_Signals_index;
+%         sqrt(norm_s)
+    end
 end
 
-    for i = 1:size(Signals_BOCcos_L1OC, 1)
+    for i = 1:size_BOCcos
         norm_s = 0;
         n = Signals_BOCcos_L1OC(i, 2); n8 = n*8;
         m = Signals_BOCcos_L1OC(i, 1); m8 = m*8;
         freq = Signals_BOCcos_L1OC(i, 3);
         freq_index = freq - farr(1) + 1;    
-        fprintf('\n|- align="center"\n');
-        fprintf('|BoCcos(%.3f, %.3f) at %.0f<math>f_b</math> ', m, n, freq);
-
-        fprintf('|| %.3f ', Qual_BoCcos_L1OC(m8, n8, freq_index, Pomex));
+        
+        if Table_Type == 1
+            fprintf('\n|- align="center"\n');
+            fprintf('|BoC<sub>cos</sub>(%.3f, %.3f) at %.0f<math>f_b</math> ', m, n, freq);
+            fprintf('|| %.3f ', Qual_BoCcos_L1OC(m8, n8, freq_index, Pomex));
+            fprintf('|| %.3f ', Qual_BoCcos_L1OC(m8, n8, freq_index, RA));
+            fprintf('|| %.3f ', Qual_BoCcos_L1OC(m8, n8, freq_index, Accur));
+            fprintf('|| %.3f ', Qual_BoCcos_L1OC(m8, n8, freq_index, MP));
+            fprintf('|| %.3f ', Qual_BoCcos_L1OC(m8, n8, freq_index, InterNam));
+            fprintf('|| %.3f ', Qual_BoCcos_L1OC(m8, n8, freq_index, InterIm));
+            fprintf('|| %.3f ', Qual_BoCcos_L1OC(m8, n8, freq_index, Search));
+            fprintf('|| %.3f ', Qual_BoCcos_L1OC(m8, n8, freq_index, Compl));        
+            fprintf('|| %.3f ', Qual_BoCcos_L1OC(m8, n8, freq_index, IntraS));
+        end
+        
         norm_s = norm_s + (C_Pomex_OC*Qual_BoCcos_L1OC(m8, n8, freq_index, Pomex))^2;
-
-        fprintf('|| %.3f ', Qual_BoCcos_L1OC(m8, n8, freq_index, RA));
-        norm_s = norm_s + (C_RA_OC*Qual_BoCcos_L1OC(m8, n8, freq_index, RA))^2;
-
-        fprintf('|| %.3f ', Qual_BoCcos_L1OC(m8, n8, freq_index, Accur));
+        norm_s = norm_s + (C_RA_OC*Qual_BoCcos_L1OC(m8, n8, freq_index, RA))^2;        
         norm_s = norm_s + (C_Accur_OC*Qual_BoCcos_L1OC(m8, n8, freq_index, Accur))^2;
-
-        fprintf('|| %.3f ', Qual_BoCcos_L1OC(m8, n8, freq_index, MP));
         norm_s = norm_s + (C_MP_OC*Qual_BoCcos_L1OC(m8, n8, freq_index, MP))^2;
-
-        fprintf('|| %.3f ', Qual_BoCcos_L1OC(m8, n8, freq_index, InterNam));
         norm_s = norm_s + (C_InterNam_OC*Qual_BoCcos_L1OC(m8, n8, freq_index, InterNam))^2;
-
-        fprintf('|| %.3f ', Qual_BoCcos_L1OC(m8, n8, freq_index, InterIm));
         norm_s = norm_s + (C_InterIm_OC*Qual_BoCcos_L1OC(m8, n8, freq_index, InterIm))^2;
-
-        fprintf('|| %.3f ', Qual_BoCcos_L1OC(m8, n8, freq_index, Search));
         norm_s = norm_s + (C_Search_OC*Qual_BoCcos_L1OC(m8, n8, freq_index, Search))^2;
-
-        fprintf('|| %.3f ', Qual_BoCcos_L1OC(m8, n8, freq_index, Compl));
         norm_s = norm_s + (C_Compl_OC*Qual_BoCcos_L1OC(m8, n8, freq_index, Compl))^2;
-
-        fprintf('|| %.3f ', Qual_BoCcos_L1OC(m8, n8, freq_index, IntraS));
         norm_s = norm_s + (C_IntraS_OC*Qual_BoCcos_L1OC(m8, n8, freq_index, IntraS))^2;
 
-        fprintf('|| %.4f ', sqrt(norm_s));
+        if Table_Type == 1
+            fprintf('|| %.4f ', sqrt(norm_s));
+        end
+        
+        All_Signals_index = All_Signals_index + 1;
+        All_Signals_Norm(All_Signals_index) = sqrt(norm_s);        
 
     end
     
         if ~isnan(Signals_BPSK_L1OC(1,1))
-            for i = 1:size(Signals_BPSK_L1OC, 1)
+            for i = 1:size_BPSK
                 norm_s = 0;
                 n = Signals_BPSK_L1OC(i, 2); n8 = n*8;
                 freq = Signals_BPSK_L1OC(i, 3);
                 freq_index = freq - farr(1) + 1;    
-                fprintf('\n|- align="center"\n');
-                fprintf('|BPSK(%.3f) at %.0f<math>f_b</math> ', n, freq);
-
-                fprintf('|| %.3f ', Qual_BPSK_L1OC(n8, freq_index, Pomex));
+                
+                if Table_Type == 1
+                    fprintf('\n|- align="center"\n');
+                    fprintf('|BPSK(%.3f) at %.0f<math>f_b</math> ', n, freq);
+                    fprintf('|| %.3f ', Qual_BPSK_L1OC(n8, freq_index, Pomex));
+                    fprintf('|| %.3f ', Qual_BPSK_L1OC(n8, freq_index, RA));
+                    fprintf('|| %.3f ', Qual_BPSK_L1OC(n8, freq_index, Accur));
+                    fprintf('|| %.3f ', Qual_BPSK_L1OC(n8, freq_index, MP));
+                    fprintf('|| %.3f ', Qual_BPSK_L1OC(n8, freq_index, InterNam));
+                    fprintf('|| %.3f ', Qual_BPSK_L1OC(n8, freq_index, InterIm));                
+                    fprintf('|| %.3f ', Qual_BPSK_L1OC(n8, freq_index, Search));
+                    fprintf('|| %.3f ', Qual_BPSK_L1OC(n8, freq_index, Compl));
+                    fprintf('|| %.3f ', Qual_BPSK_L1OC(n8, freq_index, IntraS));
+                end
+                
                 norm_s = norm_s + (C_Pomex_OC*Qual_BPSK_L1OC(n8, freq_index, Pomex))^2;
-
-                fprintf('|| %.3f ', Qual_BPSK_L1OC(n8, freq_index, RA));
                 norm_s = norm_s + (C_RA_OC*Qual_BPSK_L1OC(n8, freq_index, RA))^2;
-
-                fprintf('|| %.3f ', Qual_BPSK_L1OC(n8, freq_index, Accur));
                 norm_s = norm_s + (C_Accur_OC*Qual_BPSK_L1OC(n8, freq_index, Accur))^2;
-
-                fprintf('|| %.3f ', Qual_BPSK_L1OC(n8, freq_index, MP));
                 norm_s = norm_s + (C_MP_OC*Qual_BPSK_L1OC(n8, freq_index, MP))^2;
-
-                fprintf('|| %.3f ', Qual_BPSK_L1OC(n8, freq_index, InterNam));
                 norm_s = norm_s + (C_InterNam_OC*Qual_BPSK_L1OC(n8, freq_index, InterNam))^2;
-
-                fprintf('|| %.3f ', Qual_BPSK_L1OC(n8, freq_index, InterIm));
                 norm_s = norm_s + (C_InterIm_OC*Qual_BPSK_L1OC(n8, freq_index, InterIm))^2;
-
-                fprintf('|| %.3f ', Qual_BPSK_L1OC(n8, freq_index, Search));
                 norm_s = norm_s + (C_Search_OC*Qual_BPSK_L1OC(n8, freq_index, Search))^2;
-
-                fprintf('|| %.3f ', Qual_BPSK_L1OC(n8, freq_index, Compl));
                 norm_s = norm_s + (C_Compl_OC*Qual_BPSK_L1OC(n8, freq_index, Compl))^2;
-
-                fprintf('|| %.3f ', Qual_BPSK_L1OC(n8, freq_index, IntraS));
                 norm_s = norm_s + (C_IntraS_OC*Qual_BPSK_L1OC(n8, freq_index, IntraS))^2;
 
-                fprintf('|| %.4f ', sqrt(norm_s));
-
+                if Table_Type == 1
+                    fprintf('|| %.4f ', sqrt(norm_s));
+                end
+                
+                All_Signals_index = All_Signals_index + 1;
+                All_Signals_Norm(All_Signals_index) = sqrt(norm_s);   
+                
             end 
         end
+
+% ============ MultiPath hack ==========================
+load([path_to_Evgeniy '/MP_BOCsin.mat'], 'MP_BOCsin');
+load([path_to_Evgeniy '/MP_BOCcos.mat'], 'MP_BOCcos');
+load([path_to_Evgeniy '/MP_BPSK.mat'], 'MP_BPSK');
+
+min_MP = min([min(min(MP_BOCsin)); min(min(MP_BOCcos)); min(min(MP_BPSK))]);
+max_MP = max([max(max(MP_BOCsin)); max(min(MP_BOCcos)); max(min(MP_BPSK))]);
+
+for i = 1:size(Signals_BOCsin_L1OC, 1)
+    m = Signals_BOCsin_L1OC(i, 1); m8 = m*8;
+    n = Signals_BOCsin_L1OC(i, 2); n8 = n*8;
+    resrec = recalc_threshold(MP_BOCsin(m8, n8), ntmin, ntmax, min_MP, max_MP);
+    for freq_index = 1:fmax
+        Qual_BoCsin_L1OC(m8, n8, freq_index, MP) = resrec;
+    end
+end
+    for i = 1:size(Signals_BOCcos_L1OC, 1)
+        m = Signals_BOCcos_L1OC(i, 1); m8 = m*8;
+        n = Signals_BOCcos_L1OC(i, 2); n8 = n*8;
+        resrec = recalc_threshold(MP_BOCcos(m8, n8), ntmin, ntmax, min_MP, max_MP);
+        for freq_index = 1:fmax
+            Qual_BoCcos_L1OC(m8, n8, freq_index, MP) = resrec;
+        end
+    end
+        if ~isnan(Signals_BPSK_L1OC(1,1))
+            for i = 1:size(Signals_BPSK_L1OC, 1)
+                n = Signals_BPSK_L1OC(i, 2); n8 = n*8;
+                resrec = recalc_threshold(MP_BPSK(n8), ntmin, ntmax, min_MP, max_MP);
+                for freq_index = 1:fmax
+                    Qual_BPSK_L1OC(n8, freq_index, MP) = resrec;
+                end
+            end
+        end
+
+
+
+load('results/Evgeniy/Nado_MP.mat', 'Nado_MP');        
+if Table_Type == 2        
+    [All_Signals_Norm_a All_Signals_Norm_b] = sort(All_Signals_Norm, 1);
+    for j = 1:(TopSize)
+
+        fprintf('\n|- align="center"\n');
+
+        if All_Signals_Norm_b(j) <= size_BOCsin
+            i = All_Signals_Norm_b(j);
+            m = Signals_BOCsin_L1OC(i, 1); m8 = m*8;
+            n = Signals_BOCsin_L1OC(i, 2); n8 = n*8;
+            Nado_MP(1, m8, n8) = 1;
+            freq = Signals_BOCsin_L1OC(i, 3);
+            freq_index = freq - farr(1) + 1;    
+            fprintf('|BOC<sub>sin</sub>(%.3f, %.3f) at %.0f<math>f_b</math> ', m, n, freq);
+            fprintf('|| %.3f ', Qual_BoCsin_L1OC(m8, n8, freq_index, Pomex));
+            fprintf('|| %.3f ', Qual_BoCsin_L1OC(m8, n8, freq_index,  RA));
+            fprintf('|| %.3f ', Qual_BoCsin_L1OC(m8, n8, freq_index, Accur));
+            fprintf('|| %.3f ', Qual_BoCsin_L1OC(m8, n8, freq_index, MP));
+            fprintf('|| %.3f ', Qual_BoCsin_L1OC(m8, n8, freq_index, InterNam));
+            fprintf('|| %.3f ', Qual_BoCsin_L1OC(m8, n8, freq_index, InterIm));
+            fprintf('|| %.3f ', Qual_BoCsin_L1OC(m8, n8, freq_index, Search));
+            fprintf('|| %.3f ', Qual_BoCsin_L1OC(m8, n8, freq_index, Compl));
+            fprintf('|| %.3f ', Qual_BoCsin_L1OC(m8, n8, freq_index, IntraS));
+            norm_s = 0;
+            norm_s = norm_s + (C_Pomex_OC*Qual_BoCsin_L1OC(m8, n8, freq_index, Pomex))^2;
+            norm_s = norm_s + (C_RA_OC*Qual_BoCsin_L1OC(m8, n8, freq_index, RA))^2;
+            norm_s = norm_s + (C_Accur_OC*Qual_BoCsin_L1OC(m8, n8, freq_index, Accur))^2;
+            norm_s = norm_s + (C_MP_OC*Qual_BoCsin_L1OC(m8, n8, freq_index, MP))^2;
+            norm_s = norm_s + (C_InterNam_OC*Qual_BoCsin_L1OC(m8, n8, freq_index, InterNam))^2;
+            norm_s = norm_s + (C_InterIm_OC*Qual_BoCsin_L1OC(m8, n8, freq_index, InterIm))^2;
+            norm_s = norm_s + (C_Search_OC*Qual_BoCsin_L1OC(m8, n8, freq_index, Search))^2;
+            norm_s = norm_s + (C_Compl_OC*Qual_BoCsin_L1OC(m8, n8, freq_index, Compl))^2;
+            norm_s = norm_s + (C_IntraS_OC*Qual_BoCsin_L1OC(m8, n8, freq_index, IntraS))^2;
+            fprintf('|| %.4f ', sqrt(norm_s));
+
+        elseif All_Signals_Norm_b(j) <= (size_BOCsin + size_BOCcos)
+                i = All_Signals_Norm_b(j) -  size_BOCsin;
+                n = Signals_BOCcos_L1OC(i, 2); n8 = n*8;
+                m = Signals_BOCcos_L1OC(i, 1); m8 = m*8;
+                Nado_MP(2, m8, n8) = 1;
+                freq = Signals_BOCcos_L1OC(i, 3);
+                freq_index = freq - farr(1) + 1;    
+                fprintf('|BoC<sub>cos</sub>(%.3f, %.3f) at %.0f<math>f_b</math> ', m, n, freq);
+                fprintf('|| %.3f ', Qual_BoCcos_L1OC(m8, n8, freq_index, Pomex));
+                fprintf('|| %.3f ', Qual_BoCcos_L1OC(m8, n8, freq_index,  RA));
+                fprintf('|| %.3f ', Qual_BoCcos_L1OC(m8, n8, freq_index, Accur));
+                fprintf('|| %.3f ', Qual_BoCcos_L1OC(m8, n8, freq_index, MP));
+                fprintf('|| %.3f ', Qual_BoCcos_L1OC(m8, n8, freq_index, InterNam));
+                fprintf('|| %.3f ', Qual_BoCcos_L1OC(m8, n8, freq_index, InterIm));
+                fprintf('|| %.3f ', Qual_BoCcos_L1OC(m8, n8, freq_index, Search));
+                fprintf('|| %.3f ', Qual_BoCcos_L1OC(m8, n8, freq_index, Compl));        
+                fprintf('|| %.3f ', Qual_BoCcos_L1OC(m8, n8, freq_index, IntraS));
+                norm_s = 0;
+                norm_s = norm_s + (C_Pomex_OC*Qual_BoCcos_L1OC(m8, n8, freq_index, Pomex))^2;
+                norm_s = norm_s + (C_RA_OC*Qual_BoCcos_L1OC(m8, n8, freq_index, RA))^2;        
+                norm_s = norm_s + (C_Accur_OC*Qual_BoCcos_L1OC(m8, n8, freq_index, Accur))^2;
+                norm_s = norm_s + (C_MP_OC*Qual_BoCcos_L1OC(m8, n8, freq_index, MP))^2;
+                norm_s = norm_s + (C_InterNam_OC*Qual_BoCcos_L1OC(m8, n8, freq_index, InterNam))^2;
+                norm_s = norm_s + (C_InterIm_OC*Qual_BoCcos_L1OC(m8, n8, freq_index, InterIm))^2;
+                norm_s = norm_s + (C_Search_OC*Qual_BoCcos_L1OC(m8, n8, freq_index, Search))^2;
+                norm_s = norm_s + (C_Compl_OC*Qual_BoCcos_L1OC(m8, n8, freq_index, Compl))^2;
+                norm_s = norm_s + (C_IntraS_OC*Qual_BoCcos_L1OC(m8, n8, freq_index, IntraS))^2;
+                fprintf('|| %.4f ', sqrt(norm_s));
+        else
+                    i = All_Signals_Norm_b(j) -  size_BOCsin -  size_BOCcos;
+                    n = Signals_BPSK_L1OC(i, 2); n8 = n*8;
+                    Nado_MP(3, 1, n8) = 1;
+                    freq = Signals_BPSK_L1OC(i, 3);
+                    freq_index = freq - farr(1) + 1;    
+                    fprintf('|BPSK(%.3f) at %.0f<math>f_b</math> ', n, freq);
+                    fprintf('|| %.3f ', Qual_BPSK_L1OC(n8, freq_index, Pomex));
+                    fprintf('|| %.3f ', Qual_BPSK_L1OC(n8, freq_index,  RA));
+                    fprintf('|| %.3f ', Qual_BPSK_L1OC(n8, freq_index, Accur));
+                    fprintf('|| %.3f ', Qual_BPSK_L1OC(n8, freq_index, MP));
+                    fprintf('|| %.3f ', Qual_BPSK_L1OC(n8, freq_index, InterNam));
+                    fprintf('|| %.3f ', Qual_BPSK_L1OC(n8, freq_index, InterIm));                
+                    fprintf('|| %.3f ', Qual_BPSK_L1OC(n8, freq_index, Search));
+                    fprintf('|| %.3f ', Qual_BPSK_L1OC(n8, freq_index, Compl));
+                    fprintf('|| %.3f ', Qual_BPSK_L1OC(n8, freq_index, IntraS));
+                    norm_s = 0;
+                    norm_s = norm_s + (C_Pomex_OC*Qual_BPSK_L1OC(n8, freq_index, Pomex))^2;
+                    norm_s = norm_s + (C_RA_OC*Qual_BPSK_L1OC(n8, freq_index, RA))^2;
+                    norm_s = norm_s + (C_Accur_OC*Qual_BPSK_L1OC(n8, freq_index, Accur))^2;
+                    norm_s = norm_s + (C_MP_OC*Qual_BPSK_L1OC(n8, freq_index, MP))^2;
+                    norm_s = norm_s + (C_InterNam_OC*Qual_BPSK_L1OC(n8, freq_index, InterNam))^2;
+                    norm_s = norm_s + (C_InterIm_OC*Qual_BPSK_L1OC(n8, freq_index, InterIm))^2;
+                    norm_s = norm_s + (C_Search_OC*Qual_BPSK_L1OC(n8, freq_index, Search))^2;
+                    norm_s = norm_s + (C_Compl_OC*Qual_BPSK_L1OC(n8, freq_index, Compl))^2;
+                    norm_s = norm_s + (C_IntraS_OC*Qual_BPSK_L1OC(n8, freq_index, IntraS))^2;
+                    fprintf('|| %.4f ', sqrt(norm_s));
+
+        end
+    end
+% save('results/Evgeniy/Nado_MP.mat', 'Nado_MP');    
+end
+
 fprintf('\n|} \n');
 
 
